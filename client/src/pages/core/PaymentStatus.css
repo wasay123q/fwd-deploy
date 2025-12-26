@@ -1,0 +1,208 @@
+.payment-status-container {
+  min-height: 80vh;
+  padding: 20px;
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+.payment-status-container h2 {
+  color: #2c3e50;
+  font-weight: 700;
+  margin-bottom: 30px;
+  word-wrap: break-word;
+}
+
+.payment-status-container .card {
+  border: none;
+  border-radius: 15px;
+  overflow-x: auto;
+  max-width: 100%;
+}
+
+.payment-status-container .table-responsive {
+  overflow-x: auto !important;
+  -webkit-overflow-scrolling: touch;
+  max-width: 100%;
+  width: 100%;
+}
+
+.payment-status-container .table {
+  margin-bottom: 0;
+  width: 100%;
+}
+
+.payment-status-container .table thead {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.payment-status-container .table thead th {
+  border: none;
+  color: white;
+  font-weight: 600;
+  padding: 15px;
+}
+
+.payment-status-container .table tbody tr {
+  transition: all 0.3s ease;
+}
+
+.payment-status-container .table tbody tr:hover {
+  background-color: #f8f9fa;
+  transform: scale(1.01);
+}
+
+.payment-status-container .table tbody td {
+  vertical-align: middle;
+  padding: 15px;
+}
+
+.payment-status-container .badge {
+  font-size: 0.85rem;
+  padding: 6px 12px;
+  border-radius: 20px;
+}
+
+/* ========================================
+   RESPONSIVE DESIGN - ALL DEVICES
+   ======================================== */
+
+/* Extra Small Devices (phones, less than 576px) */
+@media (max-width: 575px) {
+  .payment-status-container {
+    padding: 0.5rem;
+  }
+
+  .payment-status-container h2 {
+    font-size: 1.25rem;
+    margin-bottom: 1rem;
+  }
+  
+  /* Make refresh button smaller */
+  .payment-status-container .btn-primary {
+    padding: 0.5rem 0.75rem;
+    font-size: 0.85rem;
+  }
+  
+  /* Table responsive wrapper */
+  .table-responsive {
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .payment-status-container .table {
+    min-width: 800px; /* Force minimum width for horizontal scroll */
+    font-size: 0.7rem;
+  }
+  
+  .payment-status-container .table thead th {
+    padding: 0.5rem !important;
+    font-size: 0.7rem !important;
+    white-space: nowrap;
+  }
+  
+  .payment-status-container .table tbody td {
+    padding: 0.5rem !important;
+    font-size: 0.7rem !important;
+    white-space: nowrap;
+  }
+  
+  .payment-status-container .badge {
+    font-size: 0.7rem;
+    padding: 4px 8px;
+  }
+  
+  /* Alert styling */
+  .payment-status-container .alert {
+    padding: 0.75rem;
+    font-size: 0.85rem;
+  }
+  
+  .payment-status-container .alert h5 {
+    font-size: 1rem;
+  }
+  
+  .payment-status-container .alert ul {
+    font-size: 0.8rem;
+  }
+}
+
+/* Small Devices (576px to 767px) */
+@media (min-width: 576px) and (max-width: 767px) {
+  .payment-status-container {
+    padding: 1rem;
+  }
+
+  .payment-status-container h2 {
+    font-size: 1.5rem;
+  }
+
+  .payment-status-container .table {
+    min-width: 850px;
+    font-size: 0.75rem;
+  }
+  
+  .payment-status-container .table thead th,
+  .payment-status-container .table tbody td {
+    padding: 0.6rem;
+    font-size: 0.75rem;
+  }
+}
+
+/* Medium Devices (tablets, 768px to 991px) */
+@media (min-width: 768px) and (max-width: 991px) {
+  .payment-status-container {
+    padding: 1.5rem;
+  }
+
+  .payment-status-container h2 {
+    font-size: 1.75rem;
+  }
+
+  .payment-status-container .table {
+    font-size: 0.85rem;
+  }
+  
+  .payment-status-container .table thead th,
+  .payment-status-container .table tbody td {
+    padding: 0.75rem;
+  }
+}
+
+/* Large Devices (desktops, 992px to 1199px) */
+@media (min-width: 992px) and (max-width: 1199px) {
+  .payment-status-container {
+    max-width: 960px;
+    margin: 0 auto;
+  }
+}
+
+/* Extra Large Devices (1200px and up) */
+@media (min-width: 1200px) {
+  .payment-status-container {
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+}
+
+/* Screenshot Modal Responsive */
+@media (max-width: 767px) {
+  .modal-dialog {
+    margin: 0.5rem;
+    max-width: calc(100% - 1rem);
+  }
+  
+  .modal-content {
+    border-radius: 12px;
+  }
+  
+  .modal-body {
+    padding: 0.5rem;
+  }
+  
+  .modal-body img {
+    width: 100%;
+    height: auto;
+    max-height: 70vh;
+    object-fit: contain;
+  }
+}

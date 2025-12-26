@@ -1,0 +1,414 @@
+/* ========================================
+   GLOBAL STYLES - MODERN RESET & BASE
+   ======================================== */
+
+/* Import Design System */
+@import "./styles/design-system.css";
+@import "./styles/glassmorphism.css";
+@import "./styles/animations.css";
+@import "./styles/utilities.css";
+
+/* === MODERN CSS RESET === */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  scroll-behavior: smooth;
+  overflow-x: hidden;
+  width: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-primary);
+  font-size: var(--font-size-base);
+  line-height: var(--line-height-normal);
+  color: var(--text-primary);
+  background-color: var(--bg-secondary);
+  min-height: 100vh;
+  overflow-x: hidden;
+  width: 100%;
+  max-width: 100vw;
+}
+
+/* === TYPOGRAPHY === */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--font-heading);
+  font-weight: var(--font-weight-bold);
+  line-height: var(--line-height-tight);
+  color: var(--text-primary);
+  margin-bottom: var(--space-md);
+}
+
+h1 {
+  font-size: var(--font-size-5xl);
+}
+h2 {
+  font-size: var(--font-size-4xl);
+}
+h3 {
+  font-size: var(--font-size-3xl);
+}
+h4 {
+  font-size: var(--font-size-2xl);
+}
+h5 {
+  font-size: var(--font-size-xl);
+}
+h6 {
+  font-size: var(--font-size-lg);
+}
+
+p {
+  margin-bottom: var(--space-md);
+  line-height: var(--line-height-relaxed);
+}
+
+a {
+  color: var(--primary);
+  text-decoration: none;
+  transition: color var(--transition-base);
+}
+
+a:hover {
+  color: var(--primary-dark);
+}
+
+/* === MODERN BUTTON STYLES === */
+button,
+.btn {
+  font-family: var(--font-primary);
+  font-weight: var(--font-weight-medium);
+  border: none;
+  border-radius: var(--radius-lg);
+  padding: var(--space-sm) var(--space-lg);
+  cursor: pointer;
+  transition: all var(--transition-base);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-xs);
+}
+
+.btn-primary {
+  background: var(--gradient-hero);
+  color: var(--text-white);
+  box-shadow: var(--shadow-md);
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+}
+
+.btn-accent {
+  background: var(--gradient-sunset);
+  color: var(--text-white);
+  box-shadow: var(--shadow-md);
+}
+
+.btn-accent:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+}
+
+.btn-outline {
+  background: transparent;
+  border: 2px solid var(--primary);
+  color: var(--primary);
+}
+
+.btn-outline:hover {
+  background: var(--primary);
+  color: var(--text-white);
+}
+
+/* === MODERN INPUT STYLES === */
+input,
+textarea,
+select {
+  font-family: var(--font-primary);
+  font-size: var(--font-size-base);
+  padding: var(--space-sm) var(--space-md);
+  border: 2px solid #e2e8f0;
+  border-radius: var(--radius-md);
+  transition: all var(--transition-base);
+  width: 100%;
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.1);
+}
+
+/* === MODERN CARD STYLES === */
+.card {
+  background: var(--bg-primary);
+  border-radius: var(--radius-xl);
+  padding: var(--space-lg);
+  box-shadow: var(--shadow-md);
+  transition: all var(--transition-base);
+}
+
+.card:hover {
+  box-shadow: var(--shadow-lg);
+}
+
+/* === CONTAINER === */
+.container {
+  width: 100%;
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 var(--space-md);
+}
+
+/* === SCROLLBAR STYLING === */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-secondary);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--neutral-gray);
+  border-radius: var(--radius-full);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--primary);
+}
+
+/* === SELECTION STYLING === */
+::selection {
+  background: var(--primary-light);
+  color: var(--text-primary);
+}
+
+/* === IMAGE OPTIMIZATION === */
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* === CODE STYLING === */
+code {
+  font-family: "Courier New", Courier, monospace;
+  background: var(--bg-secondary);
+  padding: 0.2em 0.4em;
+  border-radius: var(--radius-sm);
+  font-size: 0.9em;
+}
+
+/* ========================================
+   GLOBAL RESPONSIVE UTILITIES
+   ======================================== */
+
+/* Extra Small Devices (phones, less than 576px) */
+@media (max-width: 575px) {
+  html {
+    font-size: 14px; /* Base font size for mobile */
+  }
+
+  body {
+    font-size: 0.9rem;
+  }
+
+  h1 {
+    font-size: 1.75rem;
+  }
+  h2 {
+    font-size: 1.5rem;
+  }
+  h3 {
+    font-size: 1.25rem;
+  }
+  h4 {
+    font-size: 1.1rem;
+  }
+  h5,
+  h6 {
+    font-size: 1rem;
+  }
+
+  .container,
+  .container-fluid {
+    padding: 0 0.75rem !important;
+    max-width: 100% !important;
+    width: 100% !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+  }
+  
+  /* Prevent any element from causing horizontal scroll */
+  * {
+    max-width: 100%;
+  }
+  
+  img,
+  video,
+  iframe {
+    max-width: 100% !important;
+    height: auto !important;
+  }
+
+  /* Button responsive sizing */
+  .btn,
+  button {
+    min-height: 44px; /* Touch-friendly size */
+    padding: 0.65rem 1rem;
+  }
+
+  /* Form responsive sizing */
+  input,
+  select,
+  textarea {
+    font-size: 16px !important; /* Prevent zoom on iOS */
+    min-height: 44px;
+  }
+
+  /* Spacing adjustments */
+  .mb-4,
+  .my-4,
+  .py-4 {
+    margin-bottom: 1rem !important;
+  }
+
+  .mt-4,
+  .my-4,
+  .py-4 {
+    margin-top: 1rem !important;
+  }
+
+  .mb-5,
+  .my-5,
+  .py-5 {
+    margin-bottom: 1.5rem !important;
+  }
+
+  .mt-5,
+  .my-5,
+  .py-5 {
+    margin-top: 1.5rem !important;
+  }
+}
+
+/* Small Devices (576px to 767px) */
+@media (min-width: 576px) and (max-width: 767px) {
+  html {
+    font-size: 15px;
+  }
+
+  h1 {
+    font-size: 2rem;
+  }
+  h2 {
+    font-size: 1.75rem;
+  }
+  h3 {
+    font-size: 1.4rem;
+  }
+
+  .container {
+    padding: 0 1rem;
+    max-width: 540px;
+  }
+}
+
+/* Medium Devices (tablets, 768px to 991px) */
+@media (min-width: 768px) and (max-width: 991px) {
+  html {
+    font-size: 15px;
+  }
+
+  h1 {
+    font-size: 2.25rem;
+  }
+  h2 {
+    font-size: 1.85rem;
+  }
+  h3 {
+    font-size: 1.5rem;
+  }
+
+  .container {
+    padding: 0 1.5rem;
+    max-width: 720px;
+  }
+}
+
+/* Large Devices (desktops, 992px to 1199px) */
+@media (min-width: 992px) and (max-width: 1199px) {
+  .container {
+    max-width: 960px;
+  }
+}
+
+/* Extra Large Devices (1200px and up) */
+@media (min-width: 1200px) {
+  .container {
+    max-width: 1140px;
+  }
+}
+
+/* XXL Devices (1400px and up) */
+@media (min-width: 1400px) {
+  .container {
+    max-width: 1320px;
+  }
+}
+
+/* Utility Classes for Responsive Display */
+.d-mobile-none {
+  display: block;
+}
+
+@media (max-width: 767px) {
+  .d-mobile-none {
+    display: none !important;
+  }
+}
+
+.d-mobile-only {
+  display: none;
+}
+
+@media (max-width: 767px) {
+  .d-mobile-only {
+    display: block !important;
+  }
+}
+
+/* Touch-friendly improvements */
+@media (hover: none) and (pointer: coarse) {
+  /* This targets touch devices */
+  button,
+  .btn,
+  a {
+    min-height: 44px; /* iOS recommended touch target size */
+    min-width: 44px;
+  }
+
+  /* Remove hover effects on touch devices */
+  *:hover {
+    -webkit-tap-highlight-color: transparent;
+  }
+}

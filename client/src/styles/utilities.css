@@ -1,0 +1,396 @@
+/* ========================================
+   UTILITY CLASSES
+   Reusable helper classes
+   ======================================== */
+
+/* === FLEX UTILITIES === */
+.flex {
+  display: flex;
+}
+.flex-col {
+  flex-direction: column;
+}
+.flex-row {
+  flex-direction: row;
+}
+.flex-wrap {
+  flex-wrap: wrap;
+}
+.flex-nowrap {
+  flex-wrap: nowrap;
+}
+
+.items-center {
+  align-items: center;
+}
+.items-start {
+  align-items: flex-start;
+}
+.items-end {
+  align-items: flex-end;
+}
+.items-stretch {
+  align-items: stretch;
+}
+
+.justify-center {
+  justify-content: center;
+}
+.justify-start {
+  justify-content: flex-start;
+}
+.justify-end {
+  justify-content: flex-end;
+}
+.justify-between {
+  justify-content: space-between;
+}
+.justify-around {
+  justify-content: space-around;
+}
+
+.flex-1 {
+  flex: 1;
+}
+.flex-auto {
+  flex: auto;
+}
+.flex-none {
+  flex: none;
+}
+
+.gap-xs {
+  gap: var(--space-xs);
+}
+.gap-sm {
+  gap: var(--space-sm);
+}
+.gap-md {
+  gap: var(--space-md);
+}
+.gap-lg {
+  gap: var(--space-lg);
+}
+.gap-xl {
+  gap: var(--space-xl);
+}
+
+/* === GRID UTILITIES === */
+.grid {
+  display: grid;
+}
+.grid-cols-1 {
+  grid-template-columns: repeat(1, minmax(0, 1fr));
+}
+.grid-cols-2 {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+.grid-cols-3 {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+.grid-cols-4 {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+/* === SPACING UTILITIES === */
+.m-0 {
+  margin: 0;
+}
+.m-auto {
+  margin: auto;
+}
+.mt-sm {
+  margin-top: var(--space-sm);
+}
+.mt-md {
+  margin-top: var(--space-md);
+}
+.mt-lg {
+  margin-top: var(--space-lg);
+}
+.mt-xl {
+  margin-top: var(--space-xl);
+}
+.mb-sm {
+  margin-bottom: var(--space-sm);
+}
+.mb-md {
+  margin-bottom: var(--space-md);
+}
+.mb-lg {
+  margin-bottom: var(--space-lg);
+}
+.mb-xl {
+  margin-bottom: var(--space-xl);
+}
+.mx-auto {
+  margin-left: auto;
+  margin-right: auto;
+}
+.my-sm {
+  margin-top: var(--space-sm);
+  margin-bottom: var(--space-sm);
+}
+.my-md {
+  margin-top: var(--space-md);
+  margin-bottom: var(--space-md);
+}
+.my-lg {
+  margin-top: var(--space-lg);
+  margin-bottom: var(--space-lg);
+}
+
+.p-sm {
+  padding: var(--space-sm);
+}
+.p-md {
+  padding: var(--space-md);
+}
+.p-lg {
+  padding: var(--space-lg);
+}
+.p-xl {
+  padding: var(--space-xl);
+}
+.px-sm {
+  padding-left: var(--space-sm);
+  padding-right: var(--space-sm);
+}
+.px-md {
+  padding-left: var(--space-md);
+  padding-right: var(--space-md);
+}
+.px-lg {
+  padding-left: var(--space-lg);
+  padding-right: var(--space-lg);
+}
+.py-sm {
+  padding-top: var(--space-sm);
+  padding-bottom: var(--space-sm);
+}
+.py-md {
+  padding-top: var(--space-md);
+  padding-bottom: var(--space-md);
+}
+.py-lg {
+  padding-top: var(--space-lg);
+  padding-bottom: var(--space-lg);
+}
+
+/* === TEXT UTILITIES === */
+.text-center {
+  text-align: center;
+}
+.text-left {
+  text-align: left;
+}
+.text-right {
+  text-align: right;
+}
+
+.text-xs {
+  font-size: var(--font-size-xs);
+}
+.text-sm {
+  font-size: var(--font-size-sm);
+}
+.text-base {
+  font-size: var(--font-size-base);
+}
+.text-lg {
+  font-size: var(--font-size-lg);
+}
+.text-xl {
+  font-size: var(--font-size-xl);
+}
+.text-2xl {
+  font-size: var(--font-size-2xl);
+}
+.text-3xl {
+  font-size: var(--font-size-3xl);
+}
+.text-4xl {
+  font-size: var(--font-size-4xl);
+}
+.text-5xl {
+  font-size: var(--font-size-5xl);
+}
+
+.font-light {
+  font-weight: var(--font-weight-light);
+}
+.font-normal {
+  font-weight: var(--font-weight-normal);
+}
+.font-medium {
+  font-weight: var(--font-weight-medium);
+}
+.font-semibold {
+  font-weight: var(--font-weight-semibold);
+}
+.font-bold {
+  font-weight: var(--font-weight-bold);
+}
+.font-extrabold {
+  font-weight: var(--font-weight-extrabold);
+}
+
+.text-primary {
+  color: var(--text-primary);
+}
+.text-secondary {
+  color: var(--text-secondary);
+}
+.text-white {
+  color: var(--text-white);
+}
+
+/* === BACKGROUND UTILITIES === */
+.bg-primary {
+  background-color: var(--primary);
+}
+.bg-accent {
+  background-color: var(--accent);
+}
+.bg-success {
+  background-color: var(--success);
+}
+.bg-white {
+  background-color: var(--bg-primary);
+}
+.bg-gray {
+  background-color: var(--bg-secondary);
+}
+
+.bg-gradient-hero {
+  background: var(--gradient-hero);
+}
+.bg-gradient-sunset {
+  background: var(--gradient-sunset);
+}
+
+/* === BORDER UTILITIES === */
+.rounded-sm {
+  border-radius: var(--radius-sm);
+}
+.rounded-md {
+  border-radius: var(--radius-md);
+}
+.rounded-lg {
+  border-radius: var(--radius-lg);
+}
+.rounded-xl {
+  border-radius: var(--radius-xl);
+}
+.rounded-2xl {
+  border-radius: var(--radius-2xl);
+}
+.rounded-full {
+  border-radius: var(--radius-full);
+}
+
+/* === SHADOW UTILITIES === */
+.shadow-sm {
+  box-shadow: var(--shadow-sm);
+}
+.shadow-md {
+  box-shadow: var(--shadow-md);
+}
+.shadow-lg {
+  box-shadow: var(--shadow-lg);
+}
+.shadow-xl {
+  box-shadow: var(--shadow-xl);
+}
+.shadow-2xl {
+  box-shadow: var(--shadow-2xl);
+}
+
+/* === DISPLAY UTILITIES === */
+.block {
+  display: block;
+}
+.inline-block {
+  display: inline-block;
+}
+.inline {
+  display: inline;
+}
+.hidden {
+  display: none;
+}
+
+/* === POSITION UTILITIES === */
+.relative {
+  position: relative;
+}
+.absolute {
+  position: absolute;
+}
+.fixed {
+  position: fixed;
+}
+.sticky {
+  position: sticky;
+}
+
+/* === WIDTH UTILITIES === */
+.w-full {
+  width: 100%;
+}
+.w-auto {
+  width: auto;
+}
+.max-w-sm {
+  max-width: 640px;
+}
+.max-w-md {
+  max-width: 768px;
+}
+.max-w-lg {
+  max-width: 1024px;
+}
+.max-w-xl {
+  max-width: 1280px;
+}
+
+/* === HEIGHT UTILITIES === */
+.h-full {
+  height: 100%;
+}
+.h-screen {
+  height: 100vh;
+}
+.min-h-screen {
+  min-height: 100vh;
+}
+
+/* === OVERFLOW UTILITIES === */
+.overflow-hidden {
+  overflow: hidden;
+}
+.overflow-auto {
+  overflow: auto;
+}
+.overflow-scroll {
+  overflow: scroll;
+}
+
+/* === CURSOR UTILITIES === */
+.cursor-pointer {
+  cursor: pointer;
+}
+.cursor-not-allowed {
+  cursor: not-allowed;
+}
+
+/* === TRANSITION UTILITIES === */
+.transition {
+  transition: all var(--transition-base);
+}
+.transition-fast {
+  transition: all var(--transition-fast);
+}
+.transition-slow {
+  transition: all var(--transition-slow);
+}

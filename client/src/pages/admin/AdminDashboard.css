@@ -1,0 +1,537 @@
+/* ========================================
+   ADMIN DASHBOARD - SIMPLIFIED FIX
+   ======================================== */
+
+/* === REMOVE EXCESSIVE SPACING === */
+.py-5 {
+  padding-top: 2rem !important;
+  padding-bottom: 2rem !important;
+}
+
+.mb-4 {
+  margin-bottom: 1.5rem !important;
+}
+
+/* === CONTAINER CENTERING === */
+.container {
+  max-width: 1200px !important;
+  margin: 0 auto !important;
+  padding: 0 1.5rem !important;
+}
+
+/* === TABLE CONTAINER FIX === */
+.shadow-sm {
+  box-shadow: none !important;
+}
+
+.rounded {
+  border-radius: 0 !important;
+}
+
+.table-responsive {
+  background: #ffffff !important;
+  border: 1px solid #cbd5e1 !important;
+  border-radius: 0 !important;
+  overflow: visible !important;
+  margin-bottom: 1.5rem !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+  max-width: 100% !important;
+}
+
+/* === TABLE FIXES === */
+.table {
+  margin-bottom: 0 !important;
+  border-collapse: collapse !important;
+}
+
+.table thead {
+  background: #0ea5e9 !important;
+}
+
+.table thead th {
+  padding: 0.75rem 1rem !important;
+  font-weight: 600 !important;
+  border: none !important;
+  color: #ffffff !important;
+  font-size: 0.875rem !important;
+  text-transform: uppercase !important;
+  vertical-align: middle !important;
+}
+
+.table tbody td {
+  padding: 0.75rem 1rem !important;
+  border-bottom: 1px solid #e2e8f0 !important;
+  vertical-align: middle !important;
+  color: #1e293b !important;
+  background: #ffffff !important;
+}
+
+.table tbody tr:last-child td {
+  border-bottom: none !important;
+}
+
+.table tbody tr:hover td {
+  background: #f8fafc !important;
+}
+
+/* === BUTTON FIXES === */
+.btn {
+  padding: 0.5rem 1rem !important;
+  font-size: 0.875rem !important;
+  border-radius: 0.375rem !important;
+  font-weight: 500 !important;
+  border: none !important;
+}
+
+.btn-sm {
+  padding: 0.375rem 0.75rem !important;
+  font-size: 0.8125rem !important;
+}
+
+.btn-primary {
+  background-color: #0ea5e9 !important;
+  color: #ffffff !important;
+}
+
+.btn-primary:hover {
+  background-color: #0284c7 !important;
+}
+
+.btn-danger {
+  background-color: #ef4444 !important;
+  color: #ffffff !important;
+}
+
+.btn-danger:hover {
+  background-color: #dc2626 !important;
+}
+
+.btn-success {
+  background-color: #10b981 !important;
+  color: #ffffff !important;
+}
+
+.btn-success:hover {
+  background-color: #059669 !important;
+}
+
+.btn-warning {
+  background-color: #f59e0b !important;
+  color: #ffffff !important;
+}
+
+.btn-warning:hover {
+  background-color: #d97706 !important;
+}
+
+/* === BUTTON SPACING === */
+.me-2 {
+  margin-right: 0.5rem !important;
+}
+
+/* === TAB FIXES === */
+.nav-tabs {
+  border-bottom: 2px solid #e2e8f0 !important;
+  margin-bottom: 1.5rem !important;
+  display: none !important; /* Hide the tab navigation */
+}
+
+.nav-tabs .nav-link {
+  border: none !important;
+  color: #64748b !important;
+  font-weight: 600 !important;
+  padding: 0.75rem 1.5rem !important;
+  background: transparent !important;
+  border-bottom: 3px solid transparent !important;
+  margin-bottom: -2px !important;
+}
+
+.nav-tabs .nav-link:hover {
+  color: #0ea5e9 !important;
+  border-bottom-color: #cbd5e1 !important;
+}
+
+.nav-tabs .nav-link.active {
+  color: #0ea5e9 !important;
+  background: transparent !important;
+  border-bottom-color: #0ea5e9 !important;
+}
+
+/* === SHOW ALL TAB CONTENT === */
+.tab-content > .tab-pane {
+  display: block !important;
+  opacity: 1 !important;
+  margin-bottom: 3rem !important;
+}
+
+/* === SECTION TITLES === */
+.section-title {
+  font-size: 1.5rem !important;
+  font-weight: 700 !important;
+  color: #1e293b !important;
+  margin-bottom: 1rem !important;
+  padding-bottom: 0.75rem !important;
+  border-bottom: 2px solid #e2e8f0 !important;
+}
+
+/* === HEADING === */
+h2.text-center {
+  font-size: 2rem !important;
+  font-weight: 700 !important;
+  margin-bottom: 1.5rem !important;
+  margin-top: 2rem !important;
+  color: #1e293b !important;
+}
+
+/* === ADMIN DASHBOARD SPECIFIC === */
+.admin-dashboard {
+  background: #f8fafc !important;
+  min-height: 100vh !important;
+  padding: 2rem 0 !important;
+}
+
+/* === ADMIN HEADER SECTION === */
+.admin-header-section {
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+  margin-bottom: 2rem !important;
+  flex-wrap: wrap !important;
+}
+
+.admin-header-section h2 {
+  margin-bottom: 0 !important;
+  flex: 1 !important;
+}
+
+.logout-btn {
+  border: 2px solid #ef4444 !important;
+  color: #ef4444 !important;
+  background: transparent !important;
+  font-weight: 600 !important;
+  padding: 0.625rem 1.5rem !important;
+  border-radius: 0.5rem !important;
+  transition: all 0.25s ease !important;
+}
+
+.logout-btn:hover {
+  background: #ef4444 !important;
+  color: #ffffff !important;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(239, 68, 68, 0.3) !important;
+}
+
+/* === CENTER CONTENT === */
+.text-center.mb-4 {
+  text-align: center !important;
+  margin-bottom: 1.5rem !important;
+}
+
+/* === ADD NEW BUTTON CONTAINER === */
+.d-flex.justify-content-end {
+  margin-bottom: 1rem !important;
+  display: flex !important;
+  justify-content: flex-end !important;
+}
+
+.d-flex.justify-content-end .btn {
+  margin-left: auto !important;
+}
+
+/* === MODAL FIXES === */
+.modal-content {
+  border-radius: 0.75rem !important;
+  border: none !important;
+  background: #ffffff !important;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3) !important;
+}
+
+.modal-header {
+  background: #0ea5e9 !important;
+  color: #ffffff !important;
+  border-bottom: none !important;
+  padding: 1.25rem 1.5rem !important;
+  border-radius: 0.75rem 0.75rem 0 0 !important;
+}
+
+.modal-header .modal-title {
+  font-weight: 700 !important;
+  font-size: 1.25rem !important;
+  color: #ffffff !important;
+}
+
+.modal-header .btn-close {
+  filter: brightness(0) invert(1) !important;
+  opacity: 1 !important;
+}
+
+.modal-body {
+  padding: 1.5rem !important;
+  background: #ffffff !important;
+}
+
+.modal-footer {
+  border-top: 1px solid #e2e8f0 !important;
+  padding: 1rem 1.5rem !important;
+  background: #ffffff !important;
+  border-radius: 0 0 0.75rem 0.75rem !important;
+}
+
+/* === FORM IN MODAL === */
+.modal .form-label {
+  font-weight: 600 !important;
+  color: #1e293b !important;
+  margin-bottom: 0.5rem !important;
+  font-size: 0.9rem !important;
+  display: block !important;
+}
+
+.modal .form-control,
+.modal input,
+.modal textarea {
+  padding: 0.75rem 1rem !important;
+  border: 2px solid #cbd5e1 !important;
+  border-radius: 0.5rem !important;
+  font-size: 1rem !important;
+  transition: all 0.25s ease !important;
+  background: #ffffff !important;
+  color: #1e293b !important;
+  width: 100% !important;
+}
+
+.modal .form-control:focus,
+.modal input:focus,
+.modal textarea:focus {
+  border-color: #0ea5e9 !important;
+  box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.1) !important;
+  outline: none !important;
+  background: #ffffff !important;
+}
+
+.modal .form-control::placeholder,
+.modal input::placeholder,
+.modal textarea::placeholder {
+  color: #94a3b8 !important;
+}
+
+/* === MODAL BUTTONS === */
+.modal-footer .btn {
+  padding: 0.625rem 1.25rem !important;
+  font-weight: 600 !important;
+  border-radius: 0.5rem !important;
+}
+
+.modal-footer .btn-secondary {
+  background: #64748b !important;
+  border: none !important;
+  color: #ffffff !important;
+}
+
+.modal-footer .btn-secondary:hover {
+  background: #475569 !important;
+}
+
+.modal-footer .btn-primary {
+  background: #0ea5e9 !important;
+  border: none !important;
+  color: #ffffff !important;
+}
+
+.modal-footer .btn-primary:hover {
+  background: #0284c7 !important;
+}
+
+/* ========================================
+   RESPONSIVE DESIGN - ALL DEVICES
+   ======================================== */
+
+/* Extra Small Devices (phones, less than 576px) */
+@media (max-width: 575px) {
+  .container {
+    padding: 0 0.75rem !important;
+  }
+  
+  .admin-header-section {
+    flex-direction: column;
+    gap: 1rem;
+  }
+  
+  .admin-header-section h2 {
+    font-size: 1.5rem !important;
+    text-align: center;
+  }
+  
+  .logout-btn {
+    width: 100% !important;
+  }
+  
+  /* Tables - Horizontal scroll */
+  .table-responsive {
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  .table {
+    min-width: 800px; /* Force minimum width */
+    font-size: 0.75rem !important;
+  }
+  
+  .table thead th {
+    padding: 0.5rem !important;
+    font-size: 0.7rem !important;
+    white-space: nowrap;
+  }
+  
+  .table tbody td {
+    padding: 0.5rem !important;
+    font-size: 0.75rem !important;
+  }
+  
+  .btn-sm {
+    padding: 0.25rem 0.5rem !important;
+    font-size: 0.7rem !important;
+  }
+  
+  /* Tabs */
+  .nav-tabs {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  .nav-tabs .nav-link {
+    white-space: nowrap;
+    font-size: 0.85rem;
+  }
+  
+  /* Modals */
+  .modal-dialog {
+    margin: 0.5rem !important;
+    max-width: calc(100% - 1rem) !important;
+  }
+  
+  .modal-content {
+    border-radius: 12px !important;
+  }
+  
+  .modal-body {
+    padding: 1rem !important;
+  }
+  
+  .modal-title {
+    font-size: 1.25rem !important;
+  }
+}
+
+/* Small Devices (landscape phones, 576px to 767px) */
+@media (min-width: 576px) and (max-width: 767px) {
+  .container {
+    padding: 0 1rem !important;
+  }
+  
+  .admin-header-section h2 {
+    font-size: 1.75rem !important;
+  }
+  
+  .table-responsive {
+    overflow-x: auto !important;
+  }
+  
+  .table {
+    min-width: 900px;
+    font-size: 0.8rem !important;
+  }
+  
+  .table thead th {
+    padding: 0.6rem !important;
+    font-size: 0.75rem !important;
+  }
+  
+  .table tbody td {
+    padding: 0.6rem !important;
+  }
+  
+  .nav-tabs {
+    overflow-x: auto;
+  }
+  
+  .modal-dialog {
+    margin: 1rem !important;
+    max-width: calc(100% - 2rem) !important;
+  }
+}
+
+/* Medium Devices (tablets, 768px to 991px) */
+@media (min-width: 768px) and (max-width: 991px) {
+  .container {
+    max-width: 100% !important;
+    padding: 0 1.5rem !important;
+  }
+  
+  .table {
+    font-size: 0.875rem !important;
+  }
+  
+  .table thead th,
+  .table tbody td {
+    padding: 0.7rem !important;
+  }
+  
+  .btn {
+    padding: 0.45rem 0.9rem !important;
+    font-size: 0.85rem !important;
+  }
+  
+  .modal-dialog {
+    max-width: 600px !important;
+  }
+}
+
+/* Large Devices (desktops, 992px to 1199px) */
+@media (min-width: 992px) and (max-width: 1199px) {
+  .container {
+    max-width: 960px !important;
+  }
+  
+  .table {
+    font-size: 0.9rem !important;
+  }
+}
+
+/* Extra Large Devices (large desktops, 1200px to 1399px) */
+@media (min-width: 1200px) and (max-width: 1399px) {
+  .container {
+    max-width: 1140px !important;
+  }
+}
+
+/* XXL Devices (TVs, very large desktops, 1400px and up) */
+@media (min-width: 1400px) {
+  .container {
+    max-width: 1320px !important;
+  }
+  
+  .table thead th,
+  .table tbody td {
+    padding: 1rem 1.25rem !important;
+  }
+  
+  .btn {
+    padding: 0.625rem 1.25rem !important;
+    font-size: 1rem !important;
+  }
+}
+
+/* Landscape Orientation Adjustments */
+@media (max-height: 600px) and (orientation: landscape) {
+  .admin-header-section h2 {
+    font-size: 1.5rem !important;
+    margin-bottom: 1rem !important;
+  }
+  
+  .py-5 {
+    padding-top: 1rem !important;
+    padding-bottom: 1rem !important;
+  }
+}

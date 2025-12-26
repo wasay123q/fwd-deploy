@@ -1,0 +1,302 @@
+/* Hero Section */
+.hero-section {
+  position: relative;
+  height: 80vh;
+  min-height: 600px;
+  background: url("/public/pakimg.jpg") center center/cover no-repeat;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 0;
+}
+
+.overlay {
+  background: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.7));
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.hero-content {
+  z-index: 2;
+  color: var(--white);
+  max-width: 800px;
+  padding: 0 20px;
+}
+
+.hero-btn {
+  background-color: var(--secondary-color);
+  border: none;
+  padding: 12px 30px;
+  font-weight: 600;
+  border-radius: 30px;
+  transition: all 0.3s ease;
+}
+
+.hero-btn:hover {
+  background-color: var(--accent-color);
+  color: var(--text-color);
+  transform: translateY(-2px);
+}
+
+.fade-in-text {
+  animation: fadeIn 1.5s ease-out;
+}
+
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Section Titles */
+.section-title {
+  color: var(--primary-color);
+  font-weight: 700;
+  position: relative;
+  display: block;
+  width: 100%;
+  text-align: center;
+}
+
+.section-title::after {
+  content: "";
+  display: block;
+  width: 60px;
+  height: 4px;
+  background: var(--secondary-color);
+  margin: 10px auto 0;
+  border-radius: 2px;
+}
+
+/* Destination Cards */
+.card-hover {
+  border-radius: var(--radius);
+  overflow: hidden;
+  transition: all 0.3s ease;
+  background: var(--white);
+  margin: 0 auto;
+  max-width: 100%;
+  width: 100%;
+}
+
+.card-hover:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15) !important;
+}
+
+.card-img-wrapper {
+  overflow: hidden;
+  height: 200px;
+  position: relative;
+}
+
+.card-img-custom {
+  height: 100%;
+  width: 100%;
+  object-fit: cover;
+  transition: transform 0.5s ease;
+  display: block;
+}
+
+.card-hover:hover .card-img-custom {
+  transform: scale(1.1);
+}
+
+.card-body {
+  padding: 1.5rem;
+  background: white;
+  display: block;
+}
+
+.card-body .card-title {
+  margin: 0;
+  font-size: 1.1rem;
+  color: #1e293b;
+}
+
+/* ========================================
+   RESPONSIVE DESIGN - ALL DEVICES
+   ======================================== */
+
+/* Extra Small Devices (phones, less than 576px) */
+@media (max-width: 575px) {
+  .hero-section {
+    height: 60vh;
+    min-height: 400px;
+  }
+  
+  .hero-content {
+    padding: 0 1rem;
+  }
+  
+  .hero-content h1 {
+    font-size: 1.75rem !important;
+    line-height: 1.2;
+  }
+  
+  .hero-content p {
+    font-size: 0.95rem !important;
+  }
+  
+  .hero-btn {
+    padding: 10px 24px;
+    font-size: 0.9rem;
+    width: 100%;
+    max-width: 280px;
+  }
+  
+  .section-title {
+    font-size: 1.5rem;
+  }
+  
+  .section-title::after {
+    width: 40px;
+    height: 3px;
+  }
+  
+  .card-hover {
+    margin-bottom: 1rem;
+  }
+  
+  .card-img-wrapper {
+    height: 180px;
+  }
+  
+  .card-body {
+    padding: 1rem;
+  }
+  
+  .card-body .card-title {
+    font-size: 1rem;
+  }
+  
+  /* Grid adjustments */
+  .row {
+    margin-left: -0.5rem;
+    margin-right: -0.5rem;
+  }
+  
+  .col,
+  [class*="col-"] {
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+  }
+}
+
+/* Small Devices (576px to 767px) */
+@media (min-width: 576px) and (max-width: 767px) {
+  .hero-section {
+    height: 65vh;
+    min-height: 450px;
+  }
+  
+  .hero-content h1 {
+    font-size: 2rem !important;
+  }
+  
+  .hero-content p {
+    font-size: 1rem !important;
+  }
+  
+  .hero-btn {
+    padding: 11px 26px;
+  }
+  
+  .section-title {
+    font-size: 1.75rem;
+  }
+  
+  .card-img-wrapper {
+    height: 190px;
+  }
+}
+
+/* Medium Devices (tablets, 768px to 991px) */
+@media (min-width: 768px) and (max-width: 991px) {
+  .hero-section {
+    height: 70vh;
+    min-height: 500px;
+  }
+  
+  .hero-content h1 {
+    font-size: 2.5rem !important;
+  }
+  
+  .hero-content p {
+    font-size: 1.1rem !important;
+  }
+  
+  .section-title {
+    font-size: 2rem;
+  }
+  
+  .card-img-wrapper {
+    height: 200px;
+  }
+}
+
+/* Large Devices (desktops, 992px to 1199px) */
+@media (min-width: 992px) and (max-width: 1199px) {
+  .hero-section {
+    height: 75vh;
+    min-height: 550px;
+  }
+  
+  .hero-content {
+    max-width: 700px;
+  }
+  
+  .section-title {
+    font-size: 2.25rem;
+  }
+}
+
+/* Extra Large Devices (1200px and up) */
+@media (min-width: 1200px) {
+  .hero-section {
+    height: 80vh;
+    min-height: 600px;
+  }
+  
+  .hero-content {
+    max-width: 800px;
+  }
+  
+  .hero-content h1 {
+    font-size: 3.5rem !important;
+  }
+  
+  .section-title {
+    font-size: 2.5rem;
+  }
+}
+
+/* Landscape Orientation */
+@media (max-height: 500px) and (orientation: landscape) {
+  .hero-section {
+    height: 100vh;
+    min-height: auto;
+  }
+  
+  .hero-content h1 {
+    font-size: 1.5rem !important;
+  }
+  
+  .hero-content p {
+    font-size: 0.9rem !important;
+    margin-bottom: 0.5rem;
+  }
+  
+  .hero-btn {
+    padding: 8px 20px;
+    font-size: 0.85rem;
+  }
+}

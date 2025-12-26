@@ -1,0 +1,134 @@
+/* ========================================
+   NAVIGATION - CLEAN & MODERN
+   ======================================== */
+
+/* Brand styling */
+.navbar-brand {
+  font-weight: 700 !important;
+  font-size: 1.5rem !important;
+  color: #0ea5e9 !important;
+  letter-spacing: -0.5px;
+  transition: all 0.3s ease;
+}
+
+.navbar-brand:hover {
+  color: #0284c7 !important;
+  transform: translateY(-1px);
+}
+
+/* Nav links styling */
+.nav-link {
+  position: relative;
+  font-weight: 600 !important;
+  color: #1e293b !important;
+  padding: 0.5rem 1rem !important;
+  transition: color 0.3s ease;
+  text-decoration: none !important;
+}
+
+.nav-link:hover,
+.nav-link:focus {
+  color: #0ea5e9 !important;
+  text-decoration: none !important;
+}
+
+/* Underline animation on hover */
+.nav-link::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  width: 0;
+  height: 2px;
+  background: #0ea5e9;
+  transition: width 0.3s ease, left 0.3s ease;
+}
+
+.nav-link:hover::after {
+  width: 80%;
+  left: 10%;
+}
+
+/* Button styling */
+.navbar .btn {
+  font-weight: 600;
+  padding: 0.5rem 1.5rem;
+  border-radius: 50px;
+  transition: all 0.3s ease;
+}
+
+.navbar .btn-outline-primary {
+  border: 2px solid #0ea5e9;
+  color: #0ea5e9;
+}
+
+.navbar .btn-outline-primary:hover {
+  background: #0ea5e9;
+  color: white;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(14, 165, 233, 0.3);
+}
+
+.navbar .btn-primary {
+  background: #0ea5e9;
+  border: 2px solid #0ea5e9;
+  color: white;
+}
+
+.navbar .btn-primary:hover {
+  background: #0284c7;
+  border-color: #0284c7;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(14, 165, 233, 0.4);
+}
+
+/* Navbar toggle (hamburger) */
+.navbar-toggler {
+  border: none !important;
+  padding: 0.5rem;
+}
+
+.navbar-toggler:focus {
+  box-shadow: none !important;
+  outline: none !important;
+}
+
+.navbar-toggler-icon {
+  width: 1.5rem;
+  height: 1.5rem;
+}
+
+/* Mobile responsive styles */
+@media (max-width: 991px) {
+  .navbar-collapse {
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid #e2e8f0;
+    background: white;
+  }
+
+  .nav-link {
+    padding: 0.75rem 0 !important;
+    text-align: left;
+  }
+
+  .nav-link::after {
+    display: none;
+  }
+
+  .navbar .btn {
+    width: 100%;
+    margin-top: 0.5rem;
+  }
+
+  .d-flex.flex-column {
+    width: 100%;
+  }
+}
+
+/* Small mobile adjustments */
+@media (max-width: 575px) {
+  .navbar-brand {
+    font-size: 1.25rem !important;
+  }
+}

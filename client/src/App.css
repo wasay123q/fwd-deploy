@@ -1,0 +1,40 @@
+/* ========================================
+   APP - GLOBAL STYLES
+   ======================================== */
+
+.App {
+  min-height: 100vh;
+  background: #f8fafc;
+  overflow-x: hidden;
+  width: 100%;
+}
+
+.main-content {
+  min-height: calc(100vh - 80px);
+  padding-top: 0;
+  margin-top: 0;
+  width: 100%;
+  overflow-x: hidden;
+}
+
+/* === ANIMATIONS === */
+.fade-in {
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideIn {
+  from { transform: translateX(400px); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+
+/* === RESPONSIVE HELPERS === */
+@media (max-width: 575px) {
+  .main-content {
+    padding: 0.5rem;
+  }
+}

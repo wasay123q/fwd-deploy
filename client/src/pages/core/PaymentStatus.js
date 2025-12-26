@@ -59,7 +59,7 @@ function PaymentStatus() {
       };
       
       const response = await axios.get(
-        "http://localhost:5000/api/payments/user/status",
+        "https://fwd-deploy.onrender.com/api/payments/user/status",
         config
       );
       
@@ -124,7 +124,7 @@ function PaymentStatus() {
       const config = { headers: { Authorization: `Bearer ${token}` } };
       
       const response = await axios.put(
-        `http://localhost:5000/api/payments/${paymentId}/refund`,
+        `https://fwd-deploy.onrender.com/api/payments/${paymentId}/refund`,
         { reason: 'User cancelled booking' },
         config
       );

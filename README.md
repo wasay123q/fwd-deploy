@@ -330,7 +330,7 @@ RATE_LIMIT_MAX_REQUESTS=200
 Create a `.env` file in the `client/` directory if needed:
 
 ```env
-REACT_APP_API_URL=http://localhost:5000/api
+REACT_APP_API_URL=https://fwd-deploy.onrender.com/api
 REACT_APP_GOOGLE_CLIENT_ID=your_google_oauth_client_id
 ```
 
@@ -355,7 +355,7 @@ cd server
 node index.js
 ```
 
-Server will run on `http://localhost:5000`
+Server will run on `https://fwd-deploy.onrender.com`
 
 #### Terminal 2: Start Frontend Development Server
 
@@ -375,7 +375,7 @@ cd server
 
 ### Verify the Setup
 
-1. **Backend**: Visit `http://localhost:5000` - Should display "API is running..."
+1. **Backend**: Visit `https://fwd-deploy.onrender.com` - Should display "API is running..."
 2. **Frontend**: Visit `http://localhost:3000` - Should display the home page
 
 ---
@@ -385,7 +385,7 @@ cd server
 ### Base URL
 
 ```
-http://localhost:5000/api
+https://fwd-deploy.onrender.com/api
 ```
 
 ### Authentication Endpoints
@@ -799,7 +799,7 @@ sudo systemctl start mongod
 
 #### CORS Error
 ```
-Access to fetch at 'http://localhost:5000' has been blocked by CORS policy
+Access to fetch at 'https://fwd-deploy.onrender.com' has been blocked by CORS policy
 ```
 **Solution**: Verify `CLIENT_URL` in backend `.env` matches frontend URL
 

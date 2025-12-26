@@ -34,13 +34,13 @@ function PaymentGateway() {
 
           const config = { headers: { Authorization: `Bearer ${token}` } };
           const userRes = await axios.get(
-            "http://localhost:5000/api/auth/me",
+            "https://fwd-deploy.onrender.com/api/auth/me",
             config
           );
           const userEmail = userRes.data.email;
 
           const res = await axios.get(
-            "http://localhost:5000/api/payments",
+            "https://fwd-deploy.onrender.com/api/payments",
             config
           );
           const userBookings = res.data.filter((b) => b.username === userEmail);
@@ -60,7 +60,7 @@ function PaymentGateway() {
   React.useEffect(() => {
     if (booking?.destination && !price) {
       axios
-        .get(`http://localhost:5000/api/destination/${booking.destination}`)
+        .get(`https://fwd-deploy.onrender.com/api/destination/${booking.destination}`)
         .then((res) => setPrice(res.data.price))
         .catch((err) => console.error("Error fetching price:", err));
     }
@@ -122,7 +122,7 @@ function PaymentGateway() {
         }
 
         const response = await axios.post(
-          "http://localhost:5000/api/payments",
+          "https://fwd-deploy.onrender.com/api/payments",
           {
             ...booking,
             duration,
@@ -162,7 +162,7 @@ function PaymentGateway() {
     if (!booking._id) return alert("Booking ID missing! Cannot cancel.");
 
     try {
-      await axios.delete(`http://localhost:5000/api/payments/${booking._id}`);
+      await axios.delete(`https://fwd-deploy.onrender.com/api/payments/${booking._id}`);
       setBookingCancelled(true);
       setPaymentSuccess(false);
     } catch (error) {

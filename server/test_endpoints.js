@@ -1,7 +1,7 @@
 // Test script to verify all endpoints are working
 const axios = require('axios');
 
-const BASE_URL = 'http://localhost:5000';
+const BASE_URL = 'https://fwd-deploy.onrender.com';
 
 async function testEndpoints() {
   console.log('\n🧪 Testing API Endpoints...\n');

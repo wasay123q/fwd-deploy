@@ -42,18 +42,18 @@ const AdminDashboard = () => {
       console.log("🔄 Admin fetching data...");
       
       const bookingsRes = await axios.get(
-        "http://localhost:5000/api/payments",
+        "https://fwd-deploy.onrender.com/api/payments",
         config
       );
       console.log("✅ Bookings fetched:", bookingsRes.data.length);
       
       const destinationsRes = await axios.get(
-        "http://localhost:5000/api/destinations"
+        "https://fwd-deploy.onrender.com/api/destinations"
       );
       console.log("✅ Destinations fetched:", destinationsRes.data.length);
       
       const usersRes = await axios.get(
-        "http://localhost:5000/api/users",
+        "https://fwd-deploy.onrender.com/api/users",
         config
       );
       console.log("✅ Users fetched:", usersRes.data.length);
@@ -72,7 +72,7 @@ const AdminDashboard = () => {
     if (window.confirm("Are you sure you want to delete this booking?")) {
       try {
         const token = localStorage.getItem("token");
-        await axios.delete(`http://localhost:5000/api/payments/${id}`, {
+        await axios.delete(`https://fwd-deploy.onrender.com/api/payments/${id}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         setBookings(bookings.filter((b) => b._id !== id));
@@ -86,7 +86,7 @@ const AdminDashboard = () => {
     try {
       const token = localStorage.getItem("token");
       const response = await axios.put(
-        `http://localhost:5000/api/payments/${id}/verify`,
+        `https://fwd-deploy.onrender.com/api/payments/${id}/verify`,
         { status },
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -111,7 +111,7 @@ const AdminDashboard = () => {
     try {
       const token = localStorage.getItem("token");
       const response = await axios.put(
-        `http://localhost:5000/api/payments/${id}/verify`,
+        `https://fwd-deploy.onrender.com/api/payments/${id}/verify`,
         { status: "rejected", rejectionReason: reason },
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -135,7 +135,7 @@ const AdminDashboard = () => {
     try {
       const token = localStorage.getItem("token");
       const response = await axios.put(
-        `http://localhost:5000/api/payments/${id}/verify`,
+        `https://fwd-deploy.onrender.com/api/payments/${id}/verify`,
         { status: "suspended", suspensionReason: reason },
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -157,7 +157,7 @@ const AdminDashboard = () => {
     if (window.confirm("Are you sure you want to delete this destination?")) {
       try {
         const token = localStorage.getItem("token");
-        await axios.delete(`http://localhost:5000/api/destinations/${id}`, {
+        await axios.delete(`https://fwd-deploy.onrender.com/api/destinations/${id}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         setDestinations(destinations.filter((d) => d._id !== id));
@@ -171,7 +171,7 @@ const AdminDashboard = () => {
     if (window.confirm("Are you sure you want to delete this user?")) {
       try {
         const token = localStorage.getItem("token");
-        await axios.delete(`http://localhost:5000/api/users/${id}`, {
+        await axios.delete(`https://fwd-deploy.onrender.com/api/users/${id}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         setUsers(users.filter((u) => u._id !== id));
@@ -185,7 +185,7 @@ const AdminDashboard = () => {
     try {
       const token = localStorage.getItem("token");
       await axios.put(
-        `http://localhost:5000/api/users/${id}`,
+        `https://fwd-deploy.onrender.com/api/users/${id}`,
         {},
         {
           headers: { Authorization: `Bearer ${token}` },
@@ -205,7 +205,7 @@ const AdminDashboard = () => {
       if (currentDest) {
         // Update
         const res = await axios.put(
-          `http://localhost:5000/api/destinations/${currentDest._id}`,
+          `https://fwd-deploy.onrender.com/api/destinations/${currentDest._id}`,
           formData,
           config
         );
@@ -215,7 +215,7 @@ const AdminDashboard = () => {
       } else {
         // Create
         const res = await axios.post(
-          "http://localhost:5000/api/destinations",
+          "https://fwd-deploy.onrender.com/api/destinations",
           formData,
           config
         );

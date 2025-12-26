@@ -1,7 +1,7 @@
 // Quick test script to verify API endpoints
 const axios = require("axios");
 
-const BASE_URL = "http://localhost:5000";
+const BASE_URL = "https://fwd-deploy.onrender.com";
 
 async function testAPIs() {
   console.log("🧪 Testing API Endpoints...\n");

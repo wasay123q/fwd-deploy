@@ -1,6 +1,6 @@
 const axios = require("axios");
 
-const API_URL = "http://localhost:5000/api/auth";
+const API_URL = "https://fwd-deploy.onrender.com/api/auth";
 
 async function verifyAuth() {
   console.log("🔍 Starting Auth Verification...");

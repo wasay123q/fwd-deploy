@@ -10,7 +10,7 @@ export const AuthProvider = ({ children }) => {
   const currentTokenRef = useRef(null); // Track current token
 
   // Base URL for API
-  const API_URL = "http://localhost:5000/api/auth";
+  const API_URL = "https://fwd-deploy.onrender.com/api/auth";
 
   // Centralized token verification function
   const verifyToken = async (token, source = 'initial') => {

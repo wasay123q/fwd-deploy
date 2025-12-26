@@ -71,7 +71,7 @@ function Booking() {
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 5000); // 5 second timeout
 
-      const res = await fetch("http://localhost:5000/api/payments", {
+      const res = await fetch("https://fwd-deploy.onrender.com/api/payments", {
         headers,
         signal: controller.signal
       });
@@ -137,7 +137,7 @@ function Booking() {
 
     setIsLoading(true);
     try {
-      const res = await fetch("http://localhost:5000/api/book", {
+      const res = await fetch("https://fwd-deploy.onrender.com/api/book", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(form),
@@ -160,7 +160,7 @@ function Booking() {
 
     try {
       const token = localStorage.getItem("token");
-      const res = await fetch(`http://localhost:5000/api/payments/${id}`, {
+      const res = await fetch(`https://fwd-deploy.onrender.com/api/payments/${id}`, {
         method: "DELETE",
         headers: { Authorization: `Bearer ${token}` },
       });

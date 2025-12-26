@@ -80,7 +80,7 @@
               HTTP Requests (Axios)
                           ↕
 ┌─────────────────────────────────────────────────────────┐
-│         Backend API (http://localhost:5000)             │
+│         Backend API (https://fwd-deploy.onrender.com)             │
 └─────────────────────────────────────────────────────────┘
 ```
 

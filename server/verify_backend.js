@@ -1,6 +1,6 @@
 const axios = require("axios");
 
-const API_URL = "http://localhost:5000/api";
+const API_URL = "https://fwd-deploy.onrender.com/api";
 
 async function verifyBackend() {
   console.log("🔍 Starting Backend Verification...");

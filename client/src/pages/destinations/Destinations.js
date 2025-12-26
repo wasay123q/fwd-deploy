@@ -27,7 +27,7 @@ function Destinations() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    fetch("http://localhost:5000/api/destinations")
+    fetch("https://fwd-deploy.onrender.com/api/destinations")
       .then((res) => {
         if (!res.ok) throw new Error("Failed to fetch destinations.");
         return res.json();

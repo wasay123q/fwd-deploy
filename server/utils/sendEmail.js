@@ -1,12 +1,14 @@
 const nodemailer = require("nodemailer");
 
 const sendEmail = async (options) => {
-  // Create the transporter using your .env credentials
+  // ✅ FIX: Use explicit Host and Port (465) to prevent timeouts on Render
   const transporter = nodemailer.createTransport({
-    service: process.env.EMAIL_SERVICE, // "gmail"
+    host: "smtp.gmail.com",
+    port: 465,
+    secure: true, // true for 465, false for other ports
     auth: {
-      user: process.env.EMAIL_USERNAME, // Your email
-      pass: process.env.EMAIL_PASSWORD, // Your App Password
+      user: process.env.EMAIL_USERNAME,
+      pass: process.env.EMAIL_PASSWORD,
     },
   });
 

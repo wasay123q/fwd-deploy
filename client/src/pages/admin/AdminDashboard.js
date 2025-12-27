@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect, useContext, useCallback } from "react";
 import {
   Container,
   Table,
@@ -30,49 +30,41 @@ const AdminDashboard = () => {
     image: "",
   });
 
-  useEffect(() => {
-    fetchData();
-  }, []);
+  const BASE_URL = process.env.REACT_APP_API_URL || "https://fwd-deploy.onrender.com/api";
 
-  const fetchData = async () => {
+  // ✅ FIX: Wrapped in useCallback
+  const fetchData = useCallback(async () => {
     try {
       const token = localStorage.getItem("token");
       const config = { headers: { Authorization: `Bearer ${token}` } };
 
       console.log("🔄 Admin fetching data...");
       
-      const bookingsRes = await axios.get(
-        "https://fwd-deploy.onrender.com/api/payments",
-        config
-      );
-      console.log("✅ Bookings fetched:", bookingsRes.data.length);
-      
-      const destinationsRes = await axios.get(
-        "https://fwd-deploy.onrender.com/api/destinations"
-      );
-      console.log("✅ Destinations fetched:", destinationsRes.data.length);
-      
-      const usersRes = await axios.get(
-        "https://fwd-deploy.onrender.com/api/users",
-        config
-      );
-      console.log("✅ Users fetched:", usersRes.data.length);
+      const bookingsRes = await axios.get(`${BASE_URL}/payments`, config);
+      const destinationsRes = await axios.get(`${BASE_URL}/destinations`);
+      const usersRes = await axios.get(`${BASE_URL}/users`, config);
+
+      console.log("✅ Data fetched successfully");
 
       setBookings(bookingsRes.data);
       setDestinations(destinationsRes.data);
       setUsers(usersRes.data);
     } catch (error) {
       console.error("❌ Error fetching admin data:", error);
-      console.error("Error details:", error.response?.data);
       alert("Failed to fetch data: " + (error.response?.data?.message || error.message));
     }
-  };
+  }, [BASE_URL]); // Dependency ensures it updates if URL changes
+
+  // ✅ FIX: Added fetchData to dependency array
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
 
   const deleteBooking = async (id) => {
     if (window.confirm("Are you sure you want to delete this booking?")) {
       try {
         const token = localStorage.getItem("token");
-        await axios.delete(`https://fwd-deploy.onrender.com/api/payments/${id}`, {
+        await axios.delete(`${BASE_URL}/payments/${id}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         setBookings(bookings.filter((b) => b._id !== id));
@@ -86,20 +78,18 @@ const AdminDashboard = () => {
     try {
       const token = localStorage.getItem("token");
       const response = await axios.put(
-        `https://fwd-deploy.onrender.com/api/payments/${id}/verify`,
+        `${BASE_URL}/payments/${id}/verify`,
         { status },
         { headers: { Authorization: `Bearer ${token}` } }
       );
       
       if (response.data.success) {
-        // Update local state immediately
         setBookings(bookings.map(b => 
           b._id === id ? { ...b, verificationStatus: status, verifiedAt: new Date() } : b
         ));
         alert("Payment verified successfully!");
       }
     } catch (error) {
-      console.error("Error verifying payment:", error);
       alert("Failed to verify payment: " + (error.response?.data?.message || error.message));
     }
   };
@@ -111,20 +101,18 @@ const AdminDashboard = () => {
     try {
       const token = localStorage.getItem("token");
       const response = await axios.put(
-        `https://fwd-deploy.onrender.com/api/payments/${id}/verify`,
+        `${BASE_URL}/payments/${id}/verify`,
         { status: "rejected", rejectionReason: reason },
         { headers: { Authorization: `Bearer ${token}` } }
       );
       
       if (response.data.success) {
-        // Update local state immediately
         setBookings(bookings.map(b => 
           b._id === id ? { ...b, verificationStatus: 'rejected', rejectionReason: reason, verifiedAt: new Date() } : b
         ));
         alert("Payment rejected!");
       }
     } catch (error) {
-      console.error("Error rejecting payment:", error);
       alert("Failed to reject payment: " + (error.response?.data?.message || error.message));
     }
   };
@@ -135,20 +123,18 @@ const AdminDashboard = () => {
     try {
       const token = localStorage.getItem("token");
       const response = await axios.put(
-        `https://fwd-deploy.onrender.com/api/payments/${id}/verify`,
+        `${BASE_URL}/payments/${id}/verify`,
         { status: "suspended", suspensionReason: reason },
         { headers: { Authorization: `Bearer ${token}` } }
       );
       
       if (response.data.success) {
-        // Update local state immediately
         setBookings(bookings.map(b => 
           b._id === id ? { ...b, verificationStatus: 'suspended', suspensionReason: reason, verifiedAt: new Date() } : b
         ));
         alert("Payment suspended!");
       }
     } catch (error) {
-      console.error("Error suspending payment:", error);
       alert("Failed to suspend payment: " + (error.response?.data?.message || error.message));
     }
   };
@@ -157,7 +143,7 @@ const AdminDashboard = () => {
     if (window.confirm("Are you sure you want to delete this destination?")) {
       try {
         const token = localStorage.getItem("token");
-        await axios.delete(`https://fwd-deploy.onrender.com/api/destinations/${id}`, {
+        await axios.delete(`${BASE_URL}/destinations/${id}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         setDestinations(destinations.filter((d) => d._id !== id));
@@ -171,7 +157,7 @@ const AdminDashboard = () => {
     if (window.confirm("Are you sure you want to delete this user?")) {
       try {
         const token = localStorage.getItem("token");
-        await axios.delete(`https://fwd-deploy.onrender.com/api/users/${id}`, {
+        await axios.delete(`${BASE_URL}/users/${id}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         setUsers(users.filter((u) => u._id !== id));
@@ -185,13 +171,13 @@ const AdminDashboard = () => {
     try {
       const token = localStorage.getItem("token");
       await axios.put(
-        `https://fwd-deploy.onrender.com/api/users/${id}`,
+        `${BASE_URL}/users/${id}`,
         {},
         {
           headers: { Authorization: `Bearer ${token}` },
         }
       );
-      fetchData(); // Refresh data
+      fetchData();
     } catch (error) {
       alert("Failed to update user status");
     }
@@ -203,9 +189,8 @@ const AdminDashboard = () => {
       const config = { headers: { Authorization: `Bearer ${token}` } };
 
       if (currentDest) {
-        // Update
         const res = await axios.put(
-          `https://fwd-deploy.onrender.com/api/destinations/${currentDest._id}`,
+          `${BASE_URL}/destinations/${currentDest._id}`,
           formData,
           config
         );
@@ -213,9 +198,8 @@ const AdminDashboard = () => {
           destinations.map((d) => (d._id === currentDest._id ? res.data : d))
         );
       } else {
-        // Create
         const res = await axios.post(
-          "https://fwd-deploy.onrender.com/api/destinations",
+          `${BASE_URL}/destinations`,
           formData,
           config
         );
@@ -253,8 +237,8 @@ const AdminDashboard = () => {
           variant="outline-danger"
           className="logout-btn"
           onClick={() => {
-            logout(); // PHASE 5: Use logout from AuthContext
-            navigate('/login'); // PHASE 5: Navigate with React Router
+            logout();
+            navigate('/login');
           }}
         >
           Logout
@@ -265,7 +249,7 @@ const AdminDashboard = () => {
           <h3 className="section-title">Bookings</h3>
           {bookings.some(b => b.verificationStatus === "refunded") && (
             <div className="alert alert-info mb-3">
-              <strong>🔔 Refund Alert:</strong> Some bookings have been marked as <strong>refunded</strong>. Please process these refunds and return the money to the respective users.
+              <strong>🔔 Refund Alert:</strong> Some bookings have been marked as <strong>refunded</strong>. Please process these refunds.
             </div>
           )}
           <div className="table-responsive shadow-sm rounded">
@@ -307,84 +291,32 @@ const AdminDashboard = () => {
                       )}
                     </td>
                     <td>
-                      {booking.verificationStatus === "verified" && (
-                        <span className="badge bg-success">Verified</span>
-                      )}
-                      {booking.verificationStatus === "rejected" && (
-                        <span className="badge bg-danger">Rejected</span>
-                      )}
-                      {booking.verificationStatus === "suspended" && (
-                        <span className="badge bg-secondary">Suspended</span>
-                      )}
-                      {booking.verificationStatus === "refunded" && (
-                        <span className="badge bg-info">Refunded</span>
-                      )}
-                      {booking.verificationStatus === "pending" && (
-                        <span className="badge bg-warning text-dark">Pending</span>
-                      )}
+                      <span className={`badge ${
+                        booking.verificationStatus === "verified" ? "bg-success" :
+                        booking.verificationStatus === "rejected" ? "bg-danger" :
+                        booking.verificationStatus === "suspended" ? "bg-secondary" :
+                        booking.verificationStatus === "refunded" ? "bg-info" :
+                        "bg-warning text-dark"
+                      }`}>
+                        {booking.verificationStatus || 'pending'}
+                      </span>
                     </td>
                     <td>
                       {booking.verificationStatus === "pending" && (
                         <>
-                          <Button
-                            variant="success"
-                            size="sm"
-                            className="me-1"
-                            onClick={() => handleVerifyPayment(booking._id, "verified")}
-                          >
-                            Verify
-                          </Button>
-                          <Button
-                            variant="secondary"
-                            size="sm"
-                            className="me-1"
-                            onClick={() => handleSuspendPayment(booking._id)}
-                          >
-                            Suspend
-                          </Button>
-                          <Button
-                            variant="warning"
-                            size="sm"
-                            className="me-1"
-                            onClick={() => handleRejectPayment(booking._id)}
-                          >
-                            Reject
-                          </Button>
+                          <Button variant="success" size="sm" className="me-1" onClick={() => handleVerifyPayment(booking._id, "verified")}>Verify</Button>
+                          <Button variant="secondary" size="sm" className="me-1" onClick={() => handleSuspendPayment(booking._id)}>Suspend</Button>
+                          <Button variant="warning" size="sm" className="me-1" onClick={() => handleRejectPayment(booking._id)}>Reject</Button>
                         </>
                       )}
                       {booking.verificationStatus === "suspended" && (
                         <>
-                          <Button
-                            variant="success"
-                            size="sm"
-                            className="me-1"
-                            onClick={() => handleVerifyPayment(booking._id, "verified")}
-                          >
-                            Verify
-                          </Button>
-                          <Button
-                            variant="warning"
-                            size="sm"
-                            className="me-1"
-                            onClick={() => handleRejectPayment(booking._id)}
-                          >
-                            Reject
-                          </Button>
+                          <Button variant="success" size="sm" className="me-1" onClick={() => handleVerifyPayment(booking._id, "verified")}>Verify</Button>
+                          <Button variant="warning" size="sm" className="me-1" onClick={() => handleRejectPayment(booking._id)}>Reject</Button>
                         </>
                       )}
-                      {booking.verificationStatus === "refunded" && (
-                        <span className="text-info small">
-                          <strong>⚠️ Refund Requested:</strong> Process refund to user
-                        </span>
-                      )}
                       {booking.verificationStatus !== "refunded" && (
-                        <Button
-                          variant="danger"
-                          size="sm"
-                          onClick={() => deleteBooking(booking._id)}
-                        >
-                          Delete
-                        </Button>
+                        <Button variant="danger" size="sm" onClick={() => deleteBooking(booking._id)}>Delete</Button>
                       )}
                     </td>
                   </tr>
@@ -417,21 +349,8 @@ const AdminDashboard = () => {
                     <td>Rs. {dest.price}</td>
                     <td>{dest.description}</td>
                     <td>
-                      <Button
-                        variant="primary"
-                        size="sm"
-                        className="me-2"
-                        onClick={() => openModal(dest)}
-                      >
-                        Edit
-                      </Button>
-                      <Button
-                        variant="danger"
-                        size="sm"
-                        onClick={() => handleDeleteDest(dest._id)}
-                      >
-                        Delete
-                      </Button>
+                      <Button variant="primary" size="sm" className="me-2" onClick={() => openModal(dest)}>Edit</Button>
+                      <Button variant="danger" size="sm" onClick={() => handleDeleteDest(dest._id)}>Delete</Button>
                     </td>
                   </tr>
                 ))}
@@ -458,31 +377,12 @@ const AdminDashboard = () => {
                     <td>{user.username}</td>
                     <td>{user.email}</td>
                     <td>{user.role}</td>
+                    <td>{user.isSuspended ? <span className="text-danger">Suspended</span> : <span className="text-success">Active</span>}</td>
                     <td>
-                      {user.isSuspended ? (
-                        <span className="text-danger">Suspended</span>
-                      ) : (
-                        <span className="text-success">Active</span>
-                      )}
-                    </td>
-                    <td>
-                      <Button
-                        variant={user.isSuspended ? "success" : "warning"}
-                        size="sm"
-                        className="me-2"
-                        onClick={() => handleSuspendUser(user._id)}
-                        disabled={user.role === "admin"}
-                      >
+                      <Button variant={user.isSuspended ? "success" : "warning"} size="sm" className="me-2" onClick={() => handleSuspendUser(user._id)} disabled={user.role === "admin"}>
                         {user.isSuspended ? "Activate" : "Suspend"}
                       </Button>
-                      <Button
-                        variant="danger"
-                        size="sm"
-                        onClick={() => handleDeleteUser(user._id)}
-                        disabled={user.role === "admin"}
-                      >
-                        Delete
-                      </Button>
+                      <Button variant="danger" size="sm" onClick={() => handleDeleteUser(user._id)} disabled={user.role === "admin"}>Delete</Button>
                     </td>
                   </tr>
                 ))}
@@ -493,97 +393,31 @@ const AdminDashboard = () => {
       </Tabs>
 
       <Modal show={showModal} onHide={() => setShowModal(false)}>
-        <Modal.Header closeButton>
-          <Modal.Title>
-            {currentDest ? "Edit Destination" : "Add Destination"}
-          </Modal.Title>
-        </Modal.Header>
+        <Modal.Header closeButton><Modal.Title>{currentDest ? "Edit Destination" : "Add Destination"}</Modal.Title></Modal.Header>
         <Modal.Body>
           <Form>
-            <Form.Group className="mb-3">
-              <Form.Label>Name</Form.Label>
-              <Form.Control
-                type="text"
-                value={formData.name}
-                onChange={(e) =>
-                  setFormData({ ...formData, name: e.target.value })
-                }
-              />
-            </Form.Group>
-            <Form.Group className="mb-3">
-              <Form.Label>Description</Form.Label>
-              <Form.Control
-                as="textarea"
-                rows={3}
-                value={formData.description}
-                onChange={(e) =>
-                  setFormData({ ...formData, description: e.target.value })
-                }
-              />
-            </Form.Group>
-            <Form.Group className="mb-3">
-              <Form.Label>Price</Form.Label>
-              <Form.Control
-                type="number"
-                value={formData.price}
-                onChange={(e) =>
-                  setFormData({ ...formData, price: e.target.value })
-                }
-              />
-            </Form.Group>
-            <Form.Group className="mb-3">
-              <Form.Label>Image Filename</Form.Label>
-              <Form.Control
-                type="text"
-                placeholder="e.g., mulimg.jpg"
-                value={formData.image}
-                onChange={(e) =>
-                  setFormData({ ...formData, image: e.target.value })
-                }
-              />
-            </Form.Group>
+            <Form.Group className="mb-3"><Form.Label>Name</Form.Label><Form.Control type="text" value={formData.name} onChange={(e) => setFormData({ ...formData, name: e.target.value })} /></Form.Group>
+            <Form.Group className="mb-3"><Form.Label>Description</Form.Label><Form.Control as="textarea" rows={3} value={formData.description} onChange={(e) => setFormData({ ...formData, description: e.target.value })} /></Form.Group>
+            <Form.Group className="mb-3"><Form.Label>Price</Form.Label><Form.Control type="number" value={formData.price} onChange={(e) => setFormData({ ...formData, price: e.target.value })} /></Form.Group>
+            <Form.Group className="mb-3"><Form.Label>Image Filename</Form.Label><Form.Control type="text" placeholder="e.g., mulimg.jpg" value={formData.image} onChange={(e) => setFormData({ ...formData, image: e.target.value })} /></Form.Group>
           </Form>
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="secondary" onClick={() => setShowModal(false)}>
-            Close
-          </Button>
-          <Button variant="primary" onClick={handleSaveDest}>
-            Save Changes
-          </Button>
+          <Button variant="secondary" onClick={() => setShowModal(false)}>Close</Button>
+          <Button variant="primary" onClick={handleSaveDest}>Save Changes</Button>
         </Modal.Footer>
       </Modal>
 
-      {/* Screenshot Viewer Modal */}
-      <Modal 
-        show={showScreenshotModal} 
-        onHide={() => setShowScreenshotModal(false)}
-        size="lg"
-        centered
-      >
-        <Modal.Header closeButton>
-          <Modal.Title>Payment Screenshot</Modal.Title>
-        </Modal.Header>
+      <Modal show={showScreenshotModal} onHide={() => setShowScreenshotModal(false)} size="lg" centered>
+        <Modal.Header closeButton><Modal.Title>Payment Screenshot</Modal.Title></Modal.Header>
         <Modal.Body className="text-center">
           {currentScreenshot ? (
-            <img 
-              src={currentScreenshot} 
-              alt="Payment Screenshot" 
-              style={{ maxWidth: '100%', maxHeight: '70vh', objectFit: 'contain' }}
-              onError={(e) => {
-                e.target.onerror = null;
-                e.target.src = 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200"><text x="50%" y="50%" text-anchor="middle" dy=".3em" fill="red">Image failed to load</text></svg>';
-              }}
-            />
+            <img src={currentScreenshot} alt="Payment Screenshot" style={{ maxWidth: '100%', maxHeight: '70vh', objectFit: 'contain' }} />
           ) : (
             <p>No screenshot available</p>
           )}
         </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={() => setShowScreenshotModal(false)}>
-            Close
-          </Button>
-        </Modal.Footer>
+        <Modal.Footer><Button variant="secondary" onClick={() => setShowScreenshotModal(false)}>Close</Button></Modal.Footer>
       </Modal>
     </Container>
   );

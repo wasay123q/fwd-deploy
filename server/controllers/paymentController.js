@@ -9,32 +9,51 @@ exports.createPayment = async (req, res) => {
       return res.status(401).json({ message: "User not authenticated" });
     }
     
-    // Generate unique booking reference
+    // ✅ PERMANENT FIX: Robust ID Generation
     const year = new Date().getFullYear();
-    const count = await Payment.countDocuments();
-    const bookingReference = `BOOK-${year}-${String(count + 1).padStart(5, '0')}`;
-    console.log('📝 Generated booking reference:', bookingReference);
+    
+    // 1. Find the very last booking reference created this year
+    const lastPayment = await Payment.findOne({ 
+      bookingReference: { $regex: `^BOOK-${year}` } 
+    }).sort({ bookingReference: -1 }); // Sort descending to get the highest number
+
+    // 2. Determine the next sequence number
+    let nextSequence = 1;
+    if (lastPayment && lastPayment.bookingReference) {
+      const parts = lastPayment.bookingReference.split('-');
+      const lastNumber = parseInt(parts[2], 10);
+      if (!isNaN(lastNumber)) {
+        nextSequence = lastNumber + 1;
+      }
+    }
+
+    // 3. Generate the new ID (e.g., BOOK-2025-00006)
+    const bookingReference = `BOOK-${year}-${String(nextSequence).padStart(5, '0')}`;
+    console.log('📝 Generated robust booking reference:', bookingReference);
     
     const payment = new Payment({ 
       ...req.body, 
       user: req.user._id,
       bookingReference 
     });
+    
     const savedPayment = await payment.save();
     console.log('💾 Payment saved successfully!');
     console.log('   User ID:', req.user._id);
-    console.log('   User Email:', req.user.email);
     console.log('   Payment ID:', savedPayment._id);
     console.log('   Booking Ref:', bookingReference);
-    res
-      .status(201)
-      .json({ 
-        message: "Payment stored successfully", 
-        _id: savedPayment._id,
-        bookingReference: savedPayment.bookingReference 
-      });
+    
+    res.status(201).json({ 
+      message: "Payment stored successfully", 
+      _id: savedPayment._id,
+      bookingReference: savedPayment.bookingReference 
+    });
   } catch (error) {
     console.error("❌ Error saving payment:", error);
+    // Handle duplicates gracefully just in case of race conditions
+    if (error.code === 11000) {
+      return res.status(500).json({ message: "Booking ID conflict. Please try again." });
+    }
     res.status(500).json({ message: "Failed to store payment" });
   }
 };

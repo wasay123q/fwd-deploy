@@ -1,19 +1,20 @@
-import React, { createContext, useState, useEffect, useRef } from "react";
+import React, { createContext, useState, useEffect, useRef, useCallback } from "react";
 import axios from "axios";
 
 const AuthContext = createContext();
 
+// ✅ FIX 1: Define these OUTSIDE the component to prevent infinite re-renders
+const BASE_URL = process.env.REACT_APP_API_URL || "https://fwd-deploy.onrender.com/api";
+const API_URL = `${BASE_URL}/auth`;
+
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [authError, setAuthError] = useState(null); // Phase 4: Separate error state
-  const currentTokenRef = useRef(null); // Track current token
+  const [authError, setAuthError] = useState(null);
+  const currentTokenRef = useRef(null);
 
-  // Base URL for API
-  const API_URL = "https://fwd-deploy.onrender.com/api/auth";
-
-  // Centralized token verification function
-  const verifyToken = async (token, source = 'initial') => {
+  // ✅ FIX 2: Wrapped in useCallback to stabilize the function
+  const verifyToken = useCallback(async (token, source = 'initial') => {
     if (!token) {
       console.log(`ℹ️ [${source}] No token found - guest mode`);
       setUser(null);
@@ -29,6 +30,7 @@ export const AuthProvider = ({ children }) => {
           Authorization: `Bearer ${token}`,
         },
       };
+      // Uses the global API_URL defined above
       const { data } = await axios.get(`${API_URL}/me`, config);
       console.log(`✅ [${source}] User authenticated:`, data.email, data.role);
       setUser(data);
@@ -38,7 +40,6 @@ export const AuthProvider = ({ children }) => {
       return true;
     } catch (error) {
       console.error(`❌ [${source}] Token verification failed:`, error.response?.status);
-      // Invalid token - clear everything
       localStorage.removeItem("token");
       setUser(null);
       setAuthError('Session expired. Please login again.');
@@ -47,7 +48,7 @@ export const AuthProvider = ({ children }) => {
       setLoading(false);
       return false;
     }
-  };
+  }, []); // Empty dependency array is safe because API_URL is a constant outside
 
   // Initial token check
   useEffect(() => {
@@ -58,25 +59,21 @@ export const AuthProvider = ({ children }) => {
 
     checkLoggedIn();
 
-    // PHASE 1: Storage event listener for cross-tab synchronization
     const handleStorageChange = async (e) => {
       if (e.key === 'token') {
         console.log('🔄 [storage-event] Token changed in another tab');
         
         if (e.newValue === null) {
-          // Token was removed - logout
           console.log('🚪 [storage-event] Logged out in another tab');
           setUser(null);
           setAuthError('You have been logged out in another tab.');
           currentTokenRef.current = null;
         } else if (e.newValue !== currentTokenRef.current) {
-          // Different token - new login in another tab
           console.log('🔄 [storage-event] Different user logged in another tab');
           setAuthError('You have logged in elsewhere. This session has ended.');
           setUser(null);
           currentTokenRef.current = null;
           
-          // Re-verify the new token
           setTimeout(async () => {
             const newToken = localStorage.getItem("token");
             await verifyToken(newToken, 'storage-event');
@@ -85,13 +82,10 @@ export const AuthProvider = ({ children }) => {
       }
     };
 
-    // PHASE 2: Tab visibility/focus event listeners
     const handleVisibilityChange = async () => {
       if (!document.hidden) {
         console.log('👁️ [visibility] Tab became visible - re-verifying token');
         const token = localStorage.getItem("token");
-        
-        // Check if token changed while tab was hidden
         if (token !== currentTokenRef.current) {
           console.log('⚠️ [visibility] Token mismatch - re-verifying');
           await verifyToken(token, 'visibility');
@@ -102,26 +96,22 @@ export const AuthProvider = ({ children }) => {
     const handleWindowFocus = async () => {
       console.log('🎯 [focus] Window gained focus - checking token');
       const token = localStorage.getItem("token");
-      
-      // Check if token changed while window was unfocused
       if (token !== currentTokenRef.current) {
         console.log('⚠️ [focus] Token mismatch - re-verifying');
         await verifyToken(token, 'focus');
       }
     };
 
-    // Add event listeners
     window.addEventListener('storage', handleStorageChange);
     document.addEventListener('visibilitychange', handleVisibilityChange);
     window.addEventListener('focus', handleWindowFocus);
 
-    // Cleanup
     return () => {
       window.removeEventListener('storage', handleStorageChange);
       document.removeEventListener('visibilitychange', handleVisibilityChange);
       window.removeEventListener('focus', handleWindowFocus);
     };
-  }, []);
+  }, [verifyToken]); // ✅ FIX 3: verifyToken is now safe to include here
 
   const login = async (email, password) => {
     const { data } = await axios.post(`${API_URL}/login`, {
@@ -129,10 +119,7 @@ export const AuthProvider = ({ children }) => {
       password,
     });
     
-    // PHASE 3: Clear any previous session errors
     setAuthError(null);
-    
-    // Set new token and update state
     localStorage.setItem("token", data.token);
     currentTokenRef.current = data.token;
     setUser(data);
@@ -148,10 +135,7 @@ export const AuthProvider = ({ children }) => {
       password,
     });
     
-    // PHASE 3: Clear any previous session errors
     setAuthError(null);
-    
-    // Set new token and update state
     localStorage.setItem("token", data.token);
     currentTokenRef.current = data.token;
     setUser(data);
@@ -162,18 +146,13 @@ export const AuthProvider = ({ children }) => {
 
   const logout = () => {
     console.log('🚪 Logging out...');
-    
-    // PHASE 5: Clear token (this will trigger storage event in other tabs)
     localStorage.removeItem("token");
     currentTokenRef.current = null;
     setUser(null);
     setAuthError(null);
-    
-    // Return to home - will be handled by caller with React Router
     console.log('✅ Logout complete');
   };
 
-  // === NEW: Forgot Password ===
   const forgotPassword = async (email) => {
     const response = await axios.post(`${API_URL}/forgotpassword`, {
       email,
@@ -181,7 +160,6 @@ export const AuthProvider = ({ children }) => {
     return response.data;
   };
 
-  // === NEW: Reset Password ===
   const resetPassword = async (resetToken, password) => {
     const response = await axios.put(`${API_URL}/resetpassword/${resetToken}`, {
       password,
@@ -196,10 +174,10 @@ export const AuthProvider = ({ children }) => {
         login,
         register,
         logout,
-        forgotPassword, // Exported
-        resetPassword, // Exported
+        forgotPassword,
+        resetPassword,
         loading,
-        authError, // PHASE 4: Export auth error state
+        authError,
       }}
     >
       {children}

@@ -24,6 +24,9 @@ function PaymentGateway() {
   const [screenshot, setScreenshot] = useState(null);
   const [bookingReference, setBookingReference] = useState(null);
 
+  // ✅ FIX: Define BASE_URL
+  const BASE_URL = process.env.REACT_APP_API_URL || "https://fwd-deploy.onrender.com/api";
+
   // Fetch latest booking if not provided in state (Persistence)
   React.useEffect(() => {
     const fetchLatestBooking = async () => {
@@ -33,14 +36,17 @@ function PaymentGateway() {
           if (!token) return;
 
           const config = { headers: { Authorization: `Bearer ${token}` } };
+          
+          // ✅ FIX: Use BASE_URL
           const userRes = await axios.get(
-            "https://fwd-deploy.onrender.com/api/auth/me",
+            `${BASE_URL}/auth/me`,
             config
           );
           const userEmail = userRes.data.email;
 
+          // ✅ FIX: Use BASE_URL
           const res = await axios.get(
-            "https://fwd-deploy.onrender.com/api/payments",
+            `${BASE_URL}/payments`,
             config
           );
           const userBookings = res.data.filter((b) => b.username === userEmail);
@@ -54,17 +60,18 @@ function PaymentGateway() {
       }
     };
     fetchLatestBooking();
-  }, [booking]);
+  }, [booking, BASE_URL]); // Added BASE_URL dependency
 
   // Fetch price if not provided
   React.useEffect(() => {
     if (booking?.destination && !price) {
+      // ✅ FIX: Use BASE_URL
       axios
-        .get(`https://fwd-deploy.onrender.com/api/destination/${booking.destination}`)
+        .get(`${BASE_URL}/destination/${booking.destination}`)
         .then((res) => setPrice(res.data.price))
         .catch((err) => console.error("Error fetching price:", err));
     }
-  }, [booking, price]);
+  }, [booking, price, BASE_URL]); // Added BASE_URL dependency
 
   if (!booking) {
     return (
@@ -121,8 +128,9 @@ function PaymentGateway() {
           });
         }
 
+        // ✅ FIX: Use BASE_URL
         const response = await axios.post(
-          "https://fwd-deploy.onrender.com/api/payments",
+          `${BASE_URL}/payments`,
           {
             ...booking,
             duration,
@@ -162,7 +170,8 @@ function PaymentGateway() {
     if (!booking._id) return alert("Booking ID missing! Cannot cancel.");
 
     try {
-      await axios.delete(`https://fwd-deploy.onrender.com/api/payments/${booking._id}`);
+      // ✅ FIX: Use BASE_URL
+      await axios.delete(`${BASE_URL}/payments/${booking._id}`);
       setBookingCancelled(true);
       setPaymentSuccess(false);
     } catch (error) {

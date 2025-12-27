@@ -15,6 +15,9 @@ function PaymentStatus() {
   const [showRefundModal, setShowRefundModal] = useState(false);
   const [refundPaymentId, setRefundPaymentId] = useState(null);
 
+  // ✅ FIX: Define BASE_URL
+  const BASE_URL = process.env.REACT_APP_API_URL || "https://fwd-deploy.onrender.com/api";
+
   useEffect(() => {
     // PHASE 4: Clear local error when user successfully authenticates
     if (user && authError === null) {
@@ -58,8 +61,9 @@ function PaymentStatus() {
         timeout: 5000 // 5 second timeout
       };
       
+      // ✅ FIX: Use BASE_URL
       const response = await axios.get(
-        "https://fwd-deploy.onrender.com/api/payments/user/status",
+        `${BASE_URL}/payments/user/status`,
         config
       );
       
@@ -123,8 +127,9 @@ function PaymentStatus() {
       const token = localStorage.getItem("token");
       const config = { headers: { Authorization: `Bearer ${token}` } };
       
+      // ✅ FIX: Use BASE_URL
       const response = await axios.put(
-        `https://fwd-deploy.onrender.com/api/payments/${paymentId}/refund`,
+        `${BASE_URL}/payments/${paymentId}/refund`,
         { reason: 'User cancelled booking' },
         config
       );

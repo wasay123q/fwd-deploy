@@ -26,8 +26,12 @@ function Destinations() {
   const { user } = useContext(AuthContext);
   const navigate = useNavigate();
 
+  // ✅ FIX: Define BASE_URL to switch between Localhost and Render automatically
+  const BASE_URL = process.env.REACT_APP_API_URL || "https://fwd-deploy.onrender.com/api";
+
   useEffect(() => {
-    fetch("https://fwd-deploy.onrender.com/api/destinations")
+    // ✅ FIX: Use BASE_URL here
+    fetch(`${BASE_URL}/destinations`)
       .then((res) => {
         if (!res.ok) throw new Error("Failed to fetch destinations.");
         return res.json();
@@ -41,7 +45,7 @@ function Destinations() {
         setError(err.message);
         setLoading(false);
       });
-  }, []);
+  }, [BASE_URL]); // Added dependency
 
   useEffect(() => {
     const filtered = destinations.filter((dest) =>
@@ -55,7 +59,6 @@ function Destinations() {
     navigate(`/${pageName}`);
   };
 
-  // --- UPDATED LOGIC ---
   const handleBookClick = (e, dest) => {
     e.stopPropagation(); 
     
@@ -113,9 +116,11 @@ function Destinations() {
         )}
 
         {error && (
-          <Alert variant="danger" className="modern-alert slide-in-left">
-            <strong>Error:</strong> {error}
-          </Alert>
+          <div className="alert-container">
+             <Alert variant="danger" className="modern-alert slide-in-left">
+              <strong>Error:</strong> {error}
+            </Alert>
+          </div>
         )}
 
         {!loading && filteredDestinations.length === 0 && (
@@ -128,7 +133,7 @@ function Destinations() {
 
         <Row className="destinations-grid">
           {filteredDestinations.map((dest, index) => (
-            <Col key={dest.id} md={6} lg={4} className="mb-4">
+            <Col key={dest._id || index} md={6} lg={4} className="mb-4">
               <Card
                 className={`destination-card card-hover fade-in`}
                 style={{ animationDelay: `${index * 0.1}s` }}
@@ -142,6 +147,10 @@ function Destinations() {
                     src={`/${dest.image || "default.jpg"}`}
                     alt={dest.name}
                     className="destination-image"
+                    onError={(e) => {
+                      e.target.onerror = null; 
+                      e.target.src = "/default.jpg"; // Fallback image
+                    }}
                   />
                   <div className="image-overlay">
                     <div className="overlay-content">

@@ -20,6 +20,10 @@ import "./Booking.css";
 function Booking() {
   const navigate = useNavigate();
   const location = useLocation();
+  
+  // ✅ FIX: Define BASE_URL to switch between Localhost and Render automatically
+  const BASE_URL = process.env.REACT_APP_API_URL || "https://fwd-deploy.onrender.com/api";
+
   const [form, setForm] = useState({
     name: "",
     username: "",
@@ -54,7 +58,7 @@ function Booking() {
     }, 15000); // 15 seconds
     
     return () => clearInterval(interval);
-  }, []);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const fetchBookings = async () => {
     try {
@@ -71,7 +75,8 @@ function Booking() {
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 5000); // 5 second timeout
 
-      const res = await fetch("https://fwd-deploy.onrender.com/api/payments", {
+      // ✅ FIX: Use BASE_URL
+      const res = await fetch(`${BASE_URL}/payments`, {
         headers,
         signal: controller.signal
       });
@@ -137,7 +142,8 @@ function Booking() {
 
     setIsLoading(true);
     try {
-      const res = await fetch("https://fwd-deploy.onrender.com/api/book", {
+      // ✅ FIX: Use BASE_URL
+      const res = await fetch(`${BASE_URL}/book`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(form),
@@ -160,7 +166,8 @@ function Booking() {
 
     try {
       const token = localStorage.getItem("token");
-      const res = await fetch(`https://fwd-deploy.onrender.com/api/payments/${id}`, {
+      // ✅ FIX: Use BASE_URL
+      const res = await fetch(`${BASE_URL}/payments/${id}`, {
         method: "DELETE",
         headers: { Authorization: `Bearer ${token}` },
       });

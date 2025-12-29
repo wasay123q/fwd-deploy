@@ -131,27 +131,18 @@ const AdminDashboard = () => {
       
       // ✅ PARALLEL CALLS - All 3 at once!
       const [bookingsRes, destinationsRes, usersRes] = await Promise.all([
-        axios.get(`${BASE_URL}/payments`, config).catch(err => {
-          console.error("❌ Bookings API error:", err.response?.data || err.message);
-          return { data: { data: [] }, error: err };
-        }),
-        axios.get(`${BASE_URL}/destinations`).catch(err => {
-          console.error("❌ Destinations API error:", err.response?.data || err.message);
-          return { data: { data: [] }, error: err };
-        }),
-        axios.get(`${BASE_URL}/users`, config).catch(err => {
-          console.error("❌ Users API error:", err.response?.data || err.message);
-          return { data: { data: [] }, error: err };
-        })
+        axios.get(`${BASE_URL}/payments`, config),
+        axios.get(`${BASE_URL}/destinations`),
+        axios.get(`${BASE_URL}/users`, config)
       ]);
 
       console.log("✅ Data fetched successfully");
       console.log("📊 Bookings response:", bookingsRes);
-      console.log("📊 Bookings data:", bookingsRes.data);
+      console.log("📊 Bookings data length:", bookingsRes.data.length);
 
-      const bookingsData = Array.isArray(bookingsRes.data) ? bookingsRes.data : (bookingsRes.data?.data || []);
-      const destinationsData = Array.isArray(destinationsRes.data) ? destinationsRes.data : (destinationsRes.data?.data || []);
-      const usersData = Array.isArray(usersRes.data) ? usersRes.data : (usersRes.data?.data || []);
+      const bookingsData = bookingsRes.data || [];
+      const destinationsData = destinationsRes.data || [];
+      const usersData = usersRes.data || [];
       
       console.log("📦 Final bookings array:", bookingsData.length, "items");
 
@@ -167,11 +158,6 @@ const AdminDashboard = () => {
       }));
       localStorage.setItem('admin_cache_time', now.toString());
 
-      // Show warnings for failed requests
-      if (bookingsRes.error) console.warn("⚠️ Bookings failed:", bookingsRes.error.message);
-      if (destinationsRes.error) console.warn("⚠️ Destinations failed:", destinationsRes.error.message);
-      if (usersRes.error) console.warn("⚠️ Users failed:", usersRes.error.message);
-
     } catch (error) {
       console.error("❌ Error fetching admin data:", error);
       showNotification("Failed to fetch data: " + (error.response?.data?.message || error.message), "danger");
@@ -182,10 +168,9 @@ const AdminDashboard = () => {
 
   // ✅ FIX: Added fetchData to dependency array
   useEffect(() => {
-    // Force refresh on initial mount to bypass cache
-    console.log("🔄 Initial mount - forcing refresh");
-    localStorage.removeItem('admin_cache'); // Clear cache on mount
-    fetchData(true);
+    // Don't clear cache on mount - let it use cache if available
+    console.log("🔄 Initial mount - fetching data");
+    fetchData();
   }, [fetchData]);
 
   const deleteBooking = async (id) => {

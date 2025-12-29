@@ -145,22 +145,13 @@ exports.updateDestination = async (req, res) => {
 
     const { name, description, price, image } = req.body;
 
-    // Validate required fields
-    if (name !== undefined && (!name || !name.trim())) {
-      return res.status(400).json({ message: "Destination name cannot be empty" });
-    }
-    if (description !== undefined && (!description || !description.trim())) {
-      return res.status(400).json({ message: "Description cannot be empty" });
-    }
-    if (price !== undefined && (price <= 0)) {
-      return res.status(400).json({ message: "Price must be a positive number" });
-    }
-    if (image !== undefined && (!image || !image.trim())) {
-      return res.status(400).json({ message: "Image filename cannot be empty" });
-    }
-
-    // Check for duplicate destination name (excluding current destination)
-    if (name && name.trim()) {
+    // Only validate if field is provided (truly optional updates)
+    if (name !== undefined) {
+      if (!name || !name.trim()) {
+        return res.status(400).json({ message: "Destination name cannot be empty" });
+      }
+      
+      // Check for duplicate destination name (excluding current destination)
       const existingDestination = await Destination.findOne({
         name: { $regex: new RegExp(`^${name.trim()}$`, "i") },
         _id: { $ne: req.params.id },
@@ -171,13 +162,30 @@ exports.updateDestination = async (req, res) => {
           message: `Destination '${name.trim()}' already exists` 
         });
       }
+      
+      destination.name = name.trim();
     }
 
-    // Update fields
-    destination.name = name ? name.trim() : destination.name;
-    destination.description = description ? description.trim() : destination.description;
-    destination.price = price ? Number(price) : destination.price;
-    destination.image = image ? image.trim() : destination.image;
+    if (description !== undefined) {
+      if (!description || !description.trim()) {
+        return res.status(400).json({ message: "Description cannot be empty" });
+      }
+      destination.description = description.trim();
+    }
+
+    if (price !== undefined) {
+      if (price <= 0) {
+        return res.status(400).json({ message: "Price must be a positive number" });
+      }
+      destination.price = Number(price);
+    }
+
+    if (image !== undefined) {
+      if (!image || !image.trim()) {
+        return res.status(400).json({ message: "Image cannot be empty" });
+      }
+      destination.image = image.trim();
+    }
 
     const updatedDestination = await destination.save();
     res.json(updatedDestination);

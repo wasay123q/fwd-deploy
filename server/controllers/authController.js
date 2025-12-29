@@ -50,6 +50,13 @@ exports.loginUser = async (req, res) => {
   try {
     const user = await User.findOne({ email });
     if (user && (await user.matchPassword(password))) {
+      // Check if user is suspended
+      if (user.isSuspended) {
+        return res.status(403).json({ 
+          message: "Your account has been suspended by the administrator. Please contact support for assistance."
+        });
+      }
+
       res.json({
         _id: user.id,
         username: user.username,
@@ -69,6 +76,13 @@ exports.loginUser = async (req, res) => {
 // @desc    Get user data
 // @route   GET /api/auth/me
 exports.getMe = async (req, res) => {
+  // Check if user is suspended
+  if (req.user.isSuspended) {
+    return res.status(403).json({ 
+      message: "Your account has been suspended by the administrator.",
+      suspended: true
+    });
+  }
   res.status(200).json(req.user);
 };
 

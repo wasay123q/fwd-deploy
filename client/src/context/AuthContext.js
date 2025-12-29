@@ -40,11 +40,22 @@ export const AuthProvider = ({ children }) => {
       return true;
     } catch (error) {
       console.error(`❌ [${source}] Token verification failed:`, error.response?.status);
-      localStorage.removeItem("token");
-      setUser(null);
-      setAuthError('Session expired. Please login again.');
-      currentTokenRef.current = null;
-      console.log(`🧹 [${source}] Cleared invalid token`);
+      
+      // Check if user is suspended
+      if (error.response?.status === 403 && error.response?.data?.suspended) {
+        localStorage.removeItem("token");
+        setUser(null);
+        setAuthError('Your account has been suspended by the administrator.');
+        currentTokenRef.current = null;
+        console.log(`🚫 [${source}] User account suspended - logged out`);
+      } else {
+        localStorage.removeItem("token");
+        setUser(null);
+        setAuthError('Session expired. Please login again.');
+        currentTokenRef.current = null;
+        console.log(`🧹 [${source}] Cleared invalid token`);
+      }
+      
       setLoading(false);
       return false;
     }

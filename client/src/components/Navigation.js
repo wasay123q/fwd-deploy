@@ -54,9 +54,6 @@ const Navigation = () => {
                 <Nav.Link as={Link} to="/payment-status" eventKey="4">
                   My Payments
                 </Nav.Link>
-                <Nav.Link as={Link} to="/planning" eventKey="5">
-                  Planning
-                </Nav.Link>
               </>
             )}
 

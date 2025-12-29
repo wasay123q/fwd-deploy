@@ -32,6 +32,7 @@ const AdminDashboard = () => {
   const [loading, setLoading] = useState(false);
   const [formErrors, setFormErrors] = useState({});
   const [notification, setNotification] = useState({ show: false, message: "", type: "" });
+  const [imagePreview, setImagePreview] = useState(null);
 
   const BASE_URL = process.env.REACT_APP_API_URL || "https://fwd-deploy.onrender.com/api";
 
@@ -57,14 +58,44 @@ const AdminDashboard = () => {
       errors.price = "Price must be a positive number";
     }
     
-    if (!formData.image || !formData.image.trim()) {
-      errors.image = "Image filename is required";
-    } else if (!formData.image.match(/\.(jpg|jpeg|png|gif|webp)$/i)) {
-      errors.image = "Please enter a valid image filename (e.g., image.jpg)";
+    // Image is required only when creating a new destination
+    if (!currentDest && (!formData.image || !formData.image.trim())) {
+      errors.image = "Image is required";
     }
     
     setFormErrors(errors);
     return Object.keys(errors).length === 0;
+  };
+
+  // Handle image file selection and convert to base64
+  const handleImageUpload = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    // Validate file type
+    const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
+    if (!validTypes.includes(file.type)) {
+      showNotification("Please select a valid image file (JPG, PNG, GIF, or WebP)", "danger");
+      return;
+    }
+
+    // Validate file size (max 5MB)
+    if (file.size > 5 * 1024 * 1024) {
+      showNotification("Image size must be less than 5MB", "danger");
+      return;
+    }
+
+    // Convert to base64
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      const base64String = reader.result;
+      setFormData({ ...formData, image: base64String });
+      setImagePreview(base64String);
+    };
+    reader.onerror = () => {
+      showNotification("Failed to read image file", "danger");
+    };
+    reader.readAsDataURL(file);
   };
 
   // ✅ FIX: Wrapped in useCallback
@@ -238,18 +269,17 @@ const AdminDashboard = () => {
       const token = localStorage.getItem("token");
       const config = { headers: { Authorization: `Bearer ${token}` } };
 
-      // Trim all string fields
-      const trimmedData = {
-        name: formData.name.trim(),
-        description: formData.description.trim(),
-        price: Number(formData.price),
-        image: formData.image.trim(),
-      };
-
       if (currentDest) {
+        // When editing, only send fields that should be updated
+        const updateData = {};
+        if (formData.name && formData.name.trim()) updateData.name = formData.name.trim();
+        if (formData.description && formData.description.trim()) updateData.description = formData.description.trim();
+        if (formData.price) updateData.price = Number(formData.price);
+        if (formData.image && formData.image.trim()) updateData.image = formData.image.trim();
+
         const res = await axios.put(
           `${BASE_URL}/destinations/${currentDest._id}`,
-          trimmedData,
+          updateData,
           config
         );
         setDestinations(
@@ -257,6 +287,14 @@ const AdminDashboard = () => {
         );
         showNotification(`Destination '${res.data.name}' updated successfully`, "success");
       } else {
+        // When creating, send all required fields
+        const trimmedData = {
+          name: formData.name.trim(),
+          description: formData.description.trim(),
+          price: Number(formData.price),
+          image: formData.image.trim(),
+        };
+
         const res = await axios.post(
           `${BASE_URL}/destinations`,
           trimmedData,
@@ -268,6 +306,7 @@ const AdminDashboard = () => {
       setShowModal(false);
       setFormData({ name: "", description: "", price: "", image: "" });
       setFormErrors({});
+      setImagePreview(null);
       setCurrentDest(null);
     } catch (error) {
       const errorMsg = error.response?.data?.message || "Failed to save destination";
@@ -287,9 +326,11 @@ const AdminDashboard = () => {
         price: dest.price,
         image: dest.image,
       });
+      setImagePreview(dest.image); // Show current image when editing
     } else {
       setCurrentDest(null);
       setFormData({ name: "", description: "", price: "", image: "" });
+      setImagePreview(null);
     }
     setShowModal(true);
   };
@@ -508,16 +549,60 @@ const AdminDashboard = () => {
               <Form.Control.Feedback type="invalid">{formErrors.price}</Form.Control.Feedback>
             </Form.Group>
             <Form.Group className="mb-3">
-              <Form.Label>Image Filename <span className="text-danger">*</span></Form.Label>
-              <Form.Control 
-                type="text" 
-                placeholder="e.g., mulimg.jpg" 
-                value={formData.image} 
-                onChange={(e) => setFormData({ ...formData, image: e.target.value })}
-                isInvalid={!!formErrors.image}
-              />
+              <Form.Label>Image <span className="text-danger">*</span></Form.Label>
+              
+              {imagePreview && (
+                <div className="mb-3 text-center">
+                  <img 
+                    src={imagePreview} 
+                    alt="Preview" 
+                    style={{ 
+                      maxWidth: '100%', 
+                      maxHeight: '200px', 
+                      objectFit: 'contain',
+                      border: '1px solid #dee2e6',
+                      borderRadius: '8px',
+                      padding: '8px'
+                    }} 
+                  />
+                  <div className="mt-2">
+                    <Button 
+                      variant="outline-secondary" 
+                      size="sm"
+                      onClick={() => {
+                        setImagePreview(null);
+                        setFormData({ ...formData, image: "" });
+                      }}
+                    >
+                      Remove Image
+                    </Button>
+                  </div>
+                </div>
+              )}
+              
+              {!imagePreview && (
+                <Form.Control 
+                  type="file" 
+                  accept="image/jpeg,image/jpg,image/png,image/gif,image/webp"
+                  onChange={handleImageUpload}
+                  isInvalid={!!formErrors.image}
+                />
+              )}
+              
+              {imagePreview && (
+                <Form.Control 
+                  type="file" 
+                  accept="image/jpeg,image/jpg,image/png,image/gif,image/webp"
+                  onChange={handleImageUpload}
+                  className="mt-2"
+                />
+              )}
+              
               <Form.Control.Feedback type="invalid">{formErrors.image}</Form.Control.Feedback>
-              <Form.Text className="text-muted">Supported formats: jpg, jpeg, png, gif, webp</Form.Text>
+              <Form.Text className="text-muted">
+                Supported formats: JPG, PNG, GIF, WebP (Max 5MB)
+                {currentDest && " - Leave empty to keep current image"}
+              </Form.Text>
             </Form.Group>
           </Form>
         </Modal.Body>

@@ -63,7 +63,12 @@ function Login() {
       }
 
     } catch (err) {
-      setError(err.response?.data?.message || "Invalid email or password");
+      // Handle suspended account with specific error styling
+      if (err.response?.status === 403) {
+        setError(err.response?.data?.message || "Your account has been suspended.");
+      } else {
+        setError(err.response?.data?.message || "Invalid email or password");
+      }
     } finally {
       setIsLoading(false);
     }

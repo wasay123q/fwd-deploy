@@ -13,7 +13,6 @@ import Destinations from "./pages/destinations/Destinations";
 import Booking from "./pages/core/Booking";
 import PaymentGateway from "./pages/core/PaymentGateway";
 import PaymentStatus from "./pages/core/PaymentStatus";
-import Planning from "./pages/core/Planning";
 import Login from "./pages/auth/Login";
 import Signup from "./pages/auth/Signup";
 import AdminDashboard from "./pages/admin/AdminDashboard";
@@ -91,7 +90,6 @@ function App() {
               <Route path="/booking" element={<PrivateRoute><Booking /></PrivateRoute>} />
               <Route path="/paymentgateway" element={<PrivateRoute><PaymentGateway /></PrivateRoute>} />
               <Route path="/payment-status" element={<PrivateRoute><PaymentStatus /></PrivateRoute>} />
-              <Route path="/planning" element={<PrivateRoute><Planning /></PrivateRoute>} />
               <Route path="/admin" element={<AdminRoute><AdminDashboard /></AdminRoute>} />
             </Routes>
           </div>

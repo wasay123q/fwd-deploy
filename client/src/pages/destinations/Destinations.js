@@ -144,7 +144,7 @@ function Destinations() {
                 >
                   <Card.Img
                     variant="top"
-                    src={`/${dest.image || "default.jpg"}`}
+                    src={dest.image && dest.image.startsWith('data:image') ? dest.image : `/${dest.image || "default.jpg"}`}
                     alt={dest.name}
                     className="destination-image"
                     onError={(e) => {

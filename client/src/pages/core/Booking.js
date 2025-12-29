@@ -39,7 +39,24 @@ function Booking() {
     }
   }, [location.state]);
 
+  // Fetch destinations from API
+  useEffect(() => {
+    const fetchDestinations = async () => {
+      try {
+        const res = await fetch(`${BASE_URL}/destinations`);
+        if (res.ok) {
+          const data = await res.json();
+          setDestinations(data);
+        }
+      } catch (error) {
+        console.error("Error fetching destinations:", error);
+      }
+    };
+    fetchDestinations();
+  }, [BASE_URL]);
+
   const [bookings, setBookings] = useState([]);
+  const [destinations, setDestinations] = useState([]);
   const [message, setMessage] = useState("");
   const [emailError, setEmailError] = useState("");
   const [dateError, setDateError] = useState("");
@@ -246,12 +263,11 @@ function Booking() {
                     required
                   >
                     <option value="">Select a destination</option>
-                    <option value="Islamabad">Islamabad</option>
-                    <option value="Multan">Multan</option>
-                    <option value="Lahore">Lahore</option>
-                    <option value="Karachi">Karachi</option>
-                    <option value="Peshawar">Peshawar</option>
-                    <option value="Quetta">Quetta</option>
+                    {destinations.map((dest) => (
+                      <option key={dest._id} value={dest.name}>
+                        {dest.name}
+                      </option>
+                    ))}
                   </Form.Select>
                 </Form.Group>
 
@@ -268,6 +284,7 @@ function Booking() {
                         value={form.startDate}
                         onChange={handleChange}
                         className="modern-input"
+                        min={new Date().toISOString().split('T')[0]}
                         required
                       />
                     </Form.Group>

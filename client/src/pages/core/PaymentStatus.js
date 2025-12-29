@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect, useContext, useCallback } from "react";
 import { Container, Card, Table, Badge, Spinner, Alert, Modal, Button } from "react-bootstrap";
 import axios from "axios";
 import AuthContext from "../../context/AuthContext";
@@ -18,35 +18,7 @@ function PaymentStatus() {
   // ✅ FIX: Define BASE_URL
   const BASE_URL = process.env.REACT_APP_API_URL || "https://fwd-deploy.onrender.com/api";
 
-  useEffect(() => {
-    // PHASE 4: Clear local error when user successfully authenticates
-    if (user && authError === null) {
-      setError(null);
-    }
-    
-    // Only fetch if user is loaded and authenticated
-    if (user) {
-      console.log('👤 User loaded, fetching payments for:', user.email);
-      fetchPaymentStatus();
-      
-      // Auto-refresh every 10 seconds to catch updates
-      const interval = setInterval(() => {
-        console.log('🔄 Auto-refreshing payment status...');
-        fetchPaymentStatus();
-      }, 10000); // 10 seconds
-      
-      return () => clearInterval(interval);
-    } else if (!user && !authError) {
-      // User not loaded yet but no auth error - still loading
-      console.log('⏳ Waiting for user to load...');
-      setLoading(false);
-    } else {
-      // No user and there's an auth error
-      setLoading(false);
-    }
-  }, [user, authError]); // PHASE 4: Depend on both user and authError
-
-  const fetchPaymentStatus = async () => {
+  const fetchPaymentStatus = useCallback(async () => {
     try {
       const token = localStorage.getItem("token");
       if (!token) {
@@ -91,7 +63,35 @@ function PaymentStatus() {
       
       setLoading(false);
     }
-  };
+  }, [BASE_URL]); // Add BASE_URL as dependency
+
+  useEffect(() => {
+    // PHASE 4: Clear local error when user successfully authenticates
+    if (user && authError === null) {
+      setError(null);
+    }
+    
+    // Only fetch if user is loaded and authenticated
+    if (user) {
+      console.log('👤 User loaded, fetching payments for:', user.email);
+      fetchPaymentStatus();
+      
+      // Auto-refresh every 10 seconds to catch updates
+      const interval = setInterval(() => {
+        console.log('🔄 Auto-refreshing payment status...');
+        fetchPaymentStatus();
+      }, 10000); // 10 seconds
+      
+      return () => clearInterval(interval);
+    } else if (!user && !authError) {
+      // User not loaded yet but no auth error - still loading
+      console.log('⏳ Waiting for user to load...');
+      setLoading(false);
+    } else {
+      // No user and there's an auth error
+      setLoading(false);
+    }
+  }, [user, authError, fetchPaymentStatus]); // Add fetchPaymentStatus to dependencies
 
   const getStatusBadge = (status) => {
     switch (status) {

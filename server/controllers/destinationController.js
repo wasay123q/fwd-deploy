@@ -92,16 +92,43 @@ exports.getDestinationByName = async (req, res) => {
 exports.createDestination = async (req, res) => {
   try {
     const { name, description, price, image } = req.body;
+
+    // Validate required fields
+    if (!name || !name.trim()) {
+      return res.status(400).json({ message: "Destination name is required" });
+    }
+    if (!description || !description.trim()) {
+      return res.status(400).json({ message: "Description is required" });
+    }
+    if (!price || price <= 0) {
+      return res.status(400).json({ message: "Price must be a positive number" });
+    }
+    if (!image || !image.trim()) {
+      return res.status(400).json({ message: "Image filename is required" });
+    }
+
+    // Check for duplicate destination (case-insensitive)
+    const existingDestination = await Destination.findOne({
+      name: { $regex: new RegExp(`^${name.trim()}$`, "i") },
+    });
+
+    if (existingDestination) {
+      return res.status(400).json({ 
+        message: `Destination '${name.trim()}' already exists` 
+      });
+    }
+
     const destination = await Destination.create({
       id: Date.now(), // Simple ID generation
-      name,
-      description,
-      price,
-      image,
+      name: name.trim(),
+      description: description.trim(),
+      price: Number(price),
+      image: image.trim(),
     });
     res.status(201).json(destination);
   } catch (error) {
-    res.status(500).json({ message: "Server Error" });
+    console.error("Error creating destination:", error);
+    res.status(500).json({ message: "Failed to create destination. Please try again." });
   }
 };
 
@@ -112,19 +139,51 @@ exports.updateDestination = async (req, res) => {
   try {
     const destination = await Destination.findById(req.params.id);
 
-    if (destination) {
-      destination.name = req.body.name || destination.name;
-      destination.description = req.body.description || destination.description;
-      destination.price = req.body.price || destination.price;
-      destination.image = req.body.image || destination.image;
-
-      const updatedDestination = await destination.save();
-      res.json(updatedDestination);
-    } else {
-      res.status(404).json({ message: "Destination not found" });
+    if (!destination) {
+      return res.status(404).json({ message: "Destination not found" });
     }
+
+    const { name, description, price, image } = req.body;
+
+    // Validate required fields
+    if (name !== undefined && (!name || !name.trim())) {
+      return res.status(400).json({ message: "Destination name cannot be empty" });
+    }
+    if (description !== undefined && (!description || !description.trim())) {
+      return res.status(400).json({ message: "Description cannot be empty" });
+    }
+    if (price !== undefined && (price <= 0)) {
+      return res.status(400).json({ message: "Price must be a positive number" });
+    }
+    if (image !== undefined && (!image || !image.trim())) {
+      return res.status(400).json({ message: "Image filename cannot be empty" });
+    }
+
+    // Check for duplicate destination name (excluding current destination)
+    if (name && name.trim()) {
+      const existingDestination = await Destination.findOne({
+        name: { $regex: new RegExp(`^${name.trim()}$`, "i") },
+        _id: { $ne: req.params.id },
+      });
+
+      if (existingDestination) {
+        return res.status(400).json({ 
+          message: `Destination '${name.trim()}' already exists` 
+        });
+      }
+    }
+
+    // Update fields
+    destination.name = name ? name.trim() : destination.name;
+    destination.description = description ? description.trim() : destination.description;
+    destination.price = price ? Number(price) : destination.price;
+    destination.image = image ? image.trim() : destination.image;
+
+    const updatedDestination = await destination.save();
+    res.json(updatedDestination);
   } catch (error) {
-    res.status(500).json({ message: "Server Error" });
+    console.error("Error updating destination:", error);
+    res.status(500).json({ message: "Failed to update destination. Please try again." });
   }
 };
 
@@ -135,13 +194,17 @@ exports.deleteDestination = async (req, res) => {
   try {
     const destination = await Destination.findById(req.params.id);
 
-    if (destination) {
-      await destination.remove();
-      res.json({ message: "Destination removed" });
-    } else {
-      res.status(404).json({ message: "Destination not found" });
+    if (!destination) {
+      return res.status(404).json({ message: "Destination not found" });
     }
+
+    await destination.deleteOne();
+    res.json({ 
+      message: "Destination removed successfully",
+      deletedDestination: destination.name 
+    });
   } catch (error) {
-    res.status(500).json({ message: "Server Error" });
+    console.error("Error deleting destination:", error);
+    res.status(500).json({ message: "Failed to delete destination. Please try again." });
   }
 };

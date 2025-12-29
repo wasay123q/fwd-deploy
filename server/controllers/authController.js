@@ -72,11 +72,7 @@ exports.getMe = async (req, res) => {
   res.status(200).json(req.user);
 };
 
-// ==========================================
-// NEW: Forgot Password Logic
-// ==========================================
-// @desc    Forgot Password
-// @route   POST /api/auth/forgotpassword
+
 exports.forgotPassword = async (req, res) => {
   const { email } = req.body;
 

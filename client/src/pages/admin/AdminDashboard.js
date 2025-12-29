@@ -29,8 +29,43 @@ const AdminDashboard = () => {
     price: "",
     image: "",
   });
+  const [loading, setLoading] = useState(false);
+  const [formErrors, setFormErrors] = useState({});
+  const [notification, setNotification] = useState({ show: false, message: "", type: "" });
 
   const BASE_URL = process.env.REACT_APP_API_URL || "https://fwd-deploy.onrender.com/api";
+
+  // Show notification helper
+  const showNotification = (message, type = "success") => {
+    setNotification({ show: true, message, type });
+    setTimeout(() => setNotification({ show: false, message: "", type: "" }), 5000);
+  };
+
+  // Validate destination form
+  const validateForm = () => {
+    const errors = {};
+    
+    if (!formData.name || !formData.name.trim()) {
+      errors.name = "Destination name is required";
+    }
+    
+    if (!formData.description || !formData.description.trim()) {
+      errors.description = "Description is required";
+    }
+    
+    if (!formData.price || formData.price <= 0) {
+      errors.price = "Price must be a positive number";
+    }
+    
+    if (!formData.image || !formData.image.trim()) {
+      errors.image = "Image filename is required";
+    } else if (!formData.image.match(/\.(jpg|jpeg|png|gif|webp)$/i)) {
+      errors.image = "Please enter a valid image filename (e.g., image.jpg)";
+    }
+    
+    setFormErrors(errors);
+    return Object.keys(errors).length === 0;
+  };
 
   // ✅ FIX: Wrapped in useCallback
   const fetchData = useCallback(async () => {
@@ -140,15 +175,23 @@ const AdminDashboard = () => {
   };
 
   const handleDeleteDest = async (id) => {
-    if (window.confirm("Are you sure you want to delete this destination?")) {
+    const dest = destinations.find(d => d._id === id);
+    if (window.confirm(`Are you sure you want to delete '${dest?.name || 'this destination'}'?`)) {
       try {
         const token = localStorage.getItem("token");
-        await axios.delete(`${BASE_URL}/destinations/${id}`, {
+        const response = await axios.delete(`${BASE_URL}/destinations/${id}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         setDestinations(destinations.filter((d) => d._id !== id));
+        showNotification(
+          response.data.deletedDestination 
+            ? `Destination '${response.data.deletedDestination}' deleted successfully` 
+            : "Destination deleted successfully", 
+          "success"
+        );
       } catch (error) {
-        alert("Failed to delete destination");
+        const errorMsg = error.response?.data?.message || "Failed to delete destination";
+        showNotification(errorMsg, "danger");
       }
     }
   };
@@ -184,36 +227,58 @@ const AdminDashboard = () => {
   };
 
   const handleSaveDest = async () => {
+    // Validate form
+    if (!validateForm()) {
+      showNotification("Please fill in all required fields correctly", "danger");
+      return;
+    }
+
+    setLoading(true);
     try {
       const token = localStorage.getItem("token");
       const config = { headers: { Authorization: `Bearer ${token}` } };
 
+      // Trim all string fields
+      const trimmedData = {
+        name: formData.name.trim(),
+        description: formData.description.trim(),
+        price: Number(formData.price),
+        image: formData.image.trim(),
+      };
+
       if (currentDest) {
         const res = await axios.put(
           `${BASE_URL}/destinations/${currentDest._id}`,
-          formData,
+          trimmedData,
           config
         );
         setDestinations(
           destinations.map((d) => (d._id === currentDest._id ? res.data : d))
         );
+        showNotification(`Destination '${res.data.name}' updated successfully`, "success");
       } else {
         const res = await axios.post(
           `${BASE_URL}/destinations`,
-          formData,
+          trimmedData,
           config
         );
         setDestinations([...destinations, res.data]);
+        showNotification(`Destination '${res.data.name}' created successfully`, "success");
       }
       setShowModal(false);
       setFormData({ name: "", description: "", price: "", image: "" });
+      setFormErrors({});
       setCurrentDest(null);
     } catch (error) {
-      alert("Failed to save destination");
+      const errorMsg = error.response?.data?.message || "Failed to save destination";
+      showNotification(errorMsg, "danger");
+    } finally {
+      setLoading(false);
     }
   };
 
   const openModal = (dest = null) => {
+    setFormErrors({});
     if (dest) {
       setCurrentDest(dest);
       setFormData({
@@ -231,6 +296,17 @@ const AdminDashboard = () => {
 
   return (
     <Container className="py-5">
+      {notification.show && (
+        <div className={`alert alert-${notification.type} alert-dismissible fade show`} role="alert">
+          <strong>{notification.type === "success" ? "Success!" : "Error!"}</strong> {notification.message}
+          <button 
+            type="button" 
+            className="btn-close" 
+            onClick={() => setNotification({ show: false, message: "", type: "" })}
+            aria-label="Close"
+          ></button>
+        </div>
+      )}
       <div className="admin-header-section">
         <h2 className="text-center mb-4">Admin Dashboard</h2>
         <Button
@@ -396,15 +472,60 @@ const AdminDashboard = () => {
         <Modal.Header closeButton><Modal.Title>{currentDest ? "Edit Destination" : "Add Destination"}</Modal.Title></Modal.Header>
         <Modal.Body>
           <Form>
-            <Form.Group className="mb-3"><Form.Label>Name</Form.Label><Form.Control type="text" value={formData.name} onChange={(e) => setFormData({ ...formData, name: e.target.value })} /></Form.Group>
-            <Form.Group className="mb-3"><Form.Label>Description</Form.Label><Form.Control as="textarea" rows={3} value={formData.description} onChange={(e) => setFormData({ ...formData, description: e.target.value })} /></Form.Group>
-            <Form.Group className="mb-3"><Form.Label>Price</Form.Label><Form.Control type="number" value={formData.price} onChange={(e) => setFormData({ ...formData, price: e.target.value })} /></Form.Group>
-            <Form.Group className="mb-3"><Form.Label>Image Filename</Form.Label><Form.Control type="text" placeholder="e.g., mulimg.jpg" value={formData.image} onChange={(e) => setFormData({ ...formData, image: e.target.value })} /></Form.Group>
+            <Form.Group className="mb-3">
+              <Form.Label>Name <span className="text-danger">*</span></Form.Label>
+              <Form.Control 
+                type="text" 
+                value={formData.name} 
+                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                isInvalid={!!formErrors.name}
+                placeholder="e.g., Multan"
+              />
+              <Form.Control.Feedback type="invalid">{formErrors.name}</Form.Control.Feedback>
+            </Form.Group>
+            <Form.Group className="mb-3">
+              <Form.Label>Description <span className="text-danger">*</span></Form.Label>
+              <Form.Control 
+                as="textarea" 
+                rows={3} 
+                value={formData.description} 
+                onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                isInvalid={!!formErrors.description}
+                placeholder="Enter destination description"
+              />
+              <Form.Control.Feedback type="invalid">{formErrors.description}</Form.Control.Feedback>
+            </Form.Group>
+            <Form.Group className="mb-3">
+              <Form.Label>Price (Rs.) <span className="text-danger">*</span></Form.Label>
+              <Form.Control 
+                type="number" 
+                value={formData.price} 
+                onChange={(e) => setFormData({ ...formData, price: e.target.value })}
+                isInvalid={!!formErrors.price}
+                placeholder="e.g., 1500"
+                min="1"
+              />
+              <Form.Control.Feedback type="invalid">{formErrors.price}</Form.Control.Feedback>
+            </Form.Group>
+            <Form.Group className="mb-3">
+              <Form.Label>Image Filename <span className="text-danger">*</span></Form.Label>
+              <Form.Control 
+                type="text" 
+                placeholder="e.g., mulimg.jpg" 
+                value={formData.image} 
+                onChange={(e) => setFormData({ ...formData, image: e.target.value })}
+                isInvalid={!!formErrors.image}
+              />
+              <Form.Control.Feedback type="invalid">{formErrors.image}</Form.Control.Feedback>
+              <Form.Text className="text-muted">Supported formats: jpg, jpeg, png, gif, webp</Form.Text>
+            </Form.Group>
           </Form>
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="secondary" onClick={() => setShowModal(false)}>Close</Button>
-          <Button variant="primary" onClick={handleSaveDest}>Save Changes</Button>
+          <Button variant="secondary" onClick={() => setShowModal(false)} disabled={loading}>Close</Button>
+          <Button variant="primary" onClick={handleSaveDest} disabled={loading}>
+            {loading ? "Saving..." : "Save Changes"}
+          </Button>
         </Modal.Footer>
       </Modal>
 

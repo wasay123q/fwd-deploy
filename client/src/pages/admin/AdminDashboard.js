@@ -102,42 +102,58 @@ const AdminDashboard = () => {
   };
 
   // ✅ FIX: Wrapped in useCallback
-  const fetchData = useCallback(async () => {
+  const fetchData = useCallback(async (forceRefresh = false) => {
     try {
       setDataLoading(true);
       const token = localStorage.getItem("token");
       const config = { headers: { Authorization: `Bearer ${token}` } };
 
-      // Check cache first
-      const cachedData = localStorage.getItem('admin_cache');
-      const cacheTimestamp = localStorage.getItem('admin_cache_time');
-      const now = Date.now();
-      const CACHE_DURATION = 2 * 60 * 1000; // 2 minutes
+      // Check cache first (unless force refresh)
+      if (!forceRefresh) {
+        const cachedData = localStorage.getItem('admin_cache');
+        const cacheTimestamp = localStorage.getItem('admin_cache_time');
+        const now = Date.now();
+        const CACHE_DURATION = 2 * 60 * 1000; // 2 minutes
 
-      if (cachedData && cacheTimestamp && (now - parseInt(cacheTimestamp)) < CACHE_DURATION) {
-        console.log('📦 Using cached admin data');
-        const cached = JSON.parse(cachedData);
-        setBookings(cached.bookings || []);
-        setDestinations(cached.destinations || []);
-        setUsers(cached.users || []);
-        setDataLoading(false);
-        return;
+        if (cachedData && cacheTimestamp && (now - parseInt(cacheTimestamp)) < CACHE_DURATION) {
+          console.log('📦 Using cached admin data');
+          const cached = JSON.parse(cachedData);
+          setBookings(cached.bookings || []);
+          setDestinations(cached.destinations || []);
+          setUsers(cached.users || []);
+          setDataLoading(false);
+          return;
+        }
       }
 
       console.log("🔄 Admin fetching data in parallel...");
+      const now = Date.now();
       
       // ✅ PARALLEL CALLS - All 3 at once!
       const [bookingsRes, destinationsRes, usersRes] = await Promise.all([
-        axios.get(`${BASE_URL}/payments`, config).catch(err => ({ data: [], error: err })),
-        axios.get(`${BASE_URL}/destinations`).catch(err => ({ data: [], error: err })),
-        axios.get(`${BASE_URL}/users`, config).catch(err => ({ data: [], error: err }))
+        axios.get(`${BASE_URL}/payments`, config).catch(err => {
+          console.error("❌ Bookings API error:", err.response?.data || err.message);
+          return { data: { data: [] }, error: err };
+        }),
+        axios.get(`${BASE_URL}/destinations`).catch(err => {
+          console.error("❌ Destinations API error:", err.response?.data || err.message);
+          return { data: { data: [] }, error: err };
+        }),
+        axios.get(`${BASE_URL}/users`, config).catch(err => {
+          console.error("❌ Users API error:", err.response?.data || err.message);
+          return { data: { data: [] }, error: err };
+        })
       ]);
 
       console.log("✅ Data fetched successfully");
+      console.log("📊 Bookings response:", bookingsRes);
+      console.log("📊 Bookings data:", bookingsRes.data);
 
-      const bookingsData = bookingsRes.data || [];
-      const destinationsData = destinationsRes.data || [];
-      const usersData = usersRes.data || [];
+      const bookingsData = Array.isArray(bookingsRes.data) ? bookingsRes.data : (bookingsRes.data?.data || []);
+      const destinationsData = Array.isArray(destinationsRes.data) ? destinationsRes.data : (destinationsRes.data?.data || []);
+      const usersData = Array.isArray(usersRes.data) ? usersRes.data : (usersRes.data?.data || []);
+      
+      console.log("📦 Final bookings array:", bookingsData.length, "items");
 
       setBookings(bookingsData);
       setDestinations(destinationsData);
@@ -166,7 +182,10 @@ const AdminDashboard = () => {
 
   // ✅ FIX: Added fetchData to dependency array
   useEffect(() => {
-    fetchData();
+    // Force refresh on initial mount to bypass cache
+    console.log("🔄 Initial mount - forcing refresh");
+    localStorage.removeItem('admin_cache'); // Clear cache on mount
+    fetchData(true);
   }, [fetchData]);
 
   const deleteBooking = async (id) => {
@@ -406,16 +425,28 @@ const AdminDashboard = () => {
       )}
       <div className="admin-header-section">
         <h2 className="text-center mb-4">Admin Dashboard</h2>
-        <Button
-          variant="outline-danger"
-          className="logout-btn"
-          onClick={() => {
-            logout();
-            navigate('/login');
-          }}
-        >
-          Logout
-        </Button>
+        <div className="d-flex gap-2">
+          <Button
+            variant="outline-primary"
+            onClick={() => {
+              console.log("🔄 Manual refresh triggered");
+              fetchData(true);
+            }}
+            disabled={dataLoading}
+          >
+            {dataLoading ? "Loading..." : "Refresh Data"}
+          </Button>
+          <Button
+            variant="outline-danger"
+            className="logout-btn"
+            onClick={() => {
+              logout();
+              navigate('/login');
+            }}
+          >
+            Logout
+          </Button>
+        </div>
       </div>
       <Tabs defaultActiveKey="bookings" className="mb-3">
         <Tab eventKey="bookings" title="Bookings">

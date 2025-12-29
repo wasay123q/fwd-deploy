@@ -43,9 +43,27 @@ function Booking() {
   useEffect(() => {
     const fetchDestinations = async () => {
       try {
+        // Check cache first
+        const cachedData = localStorage.getItem('destinations_cache');
+        const cacheTimestamp = localStorage.getItem('destinations_cache_time');
+        const now = Date.now();
+        const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
+
+        // If cache exists and is still valid, use it
+        if (cachedData && cacheTimestamp && (now - parseInt(cacheTimestamp)) < CACHE_DURATION) {
+          console.log('📦 Using cached destinations for booking');
+          setDestinations(JSON.parse(cachedData));
+          return;
+        }
+
+        // Otherwise, fetch from API
+        console.log('🌐 Fetching destinations for booking');
         const res = await fetch(`${BASE_URL}/destinations`);
         if (res.ok) {
           const data = await res.json();
+          // Save to cache
+          localStorage.setItem('destinations_cache', JSON.stringify(data));
+          localStorage.setItem('destinations_cache_time', now.toString());
           setDestinations(data);
         }
       } catch (error) {

@@ -2,6 +2,16 @@
    ADMIN DASHBOARD - SIMPLIFIED FIX
    ======================================== */
 
+/* === SHIMMER ANIMATION === */
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
 /* === REMOVE EXCESSIVE SPACING === */
 .py-5 {
   padding-top: 2rem !important;

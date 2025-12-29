@@ -33,6 +33,9 @@ const AdminDashboard = () => {
   const [formErrors, setFormErrors] = useState({});
   const [notification, setNotification] = useState({ show: false, message: "", type: "" });
   const [imagePreview, setImagePreview] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage] = useState(10);
+  const [dataLoading, setDataLoading] = useState(true);
 
   const BASE_URL = process.env.REACT_APP_API_URL || "https://fwd-deploy.onrender.com/api";
 
@@ -101,25 +104,65 @@ const AdminDashboard = () => {
   // ✅ FIX: Wrapped in useCallback
   const fetchData = useCallback(async () => {
     try {
+      setDataLoading(true);
       const token = localStorage.getItem("token");
       const config = { headers: { Authorization: `Bearer ${token}` } };
 
-      console.log("🔄 Admin fetching data...");
+      // Check cache first
+      const cachedData = localStorage.getItem('admin_cache');
+      const cacheTimestamp = localStorage.getItem('admin_cache_time');
+      const now = Date.now();
+      const CACHE_DURATION = 2 * 60 * 1000; // 2 minutes
+
+      if (cachedData && cacheTimestamp && (now - parseInt(cacheTimestamp)) < CACHE_DURATION) {
+        console.log('📦 Using cached admin data');
+        const cached = JSON.parse(cachedData);
+        setBookings(cached.bookings || []);
+        setDestinations(cached.destinations || []);
+        setUsers(cached.users || []);
+        setDataLoading(false);
+        return;
+      }
+
+      console.log("🔄 Admin fetching data in parallel...");
       
-      const bookingsRes = await axios.get(`${BASE_URL}/payments`, config);
-      const destinationsRes = await axios.get(`${BASE_URL}/destinations`);
-      const usersRes = await axios.get(`${BASE_URL}/users`, config);
+      // ✅ PARALLEL CALLS - All 3 at once!
+      const [bookingsRes, destinationsRes, usersRes] = await Promise.all([
+        axios.get(`${BASE_URL}/payments`, config).catch(err => ({ data: [], error: err })),
+        axios.get(`${BASE_URL}/destinations`).catch(err => ({ data: [], error: err })),
+        axios.get(`${BASE_URL}/users`, config).catch(err => ({ data: [], error: err }))
+      ]);
 
       console.log("✅ Data fetched successfully");
 
-      setBookings(bookingsRes.data);
-      setDestinations(destinationsRes.data);
-      setUsers(usersRes.data);
+      const bookingsData = bookingsRes.data || [];
+      const destinationsData = destinationsRes.data || [];
+      const usersData = usersRes.data || [];
+
+      setBookings(bookingsData);
+      setDestinations(destinationsData);
+      setUsers(usersData);
+
+      // Save to cache
+      localStorage.setItem('admin_cache', JSON.stringify({
+        bookings: bookingsData,
+        destinations: destinationsData,
+        users: usersData
+      }));
+      localStorage.setItem('admin_cache_time', now.toString());
+
+      // Show warnings for failed requests
+      if (bookingsRes.error) console.warn("⚠️ Bookings failed:", bookingsRes.error.message);
+      if (destinationsRes.error) console.warn("⚠️ Destinations failed:", destinationsRes.error.message);
+      if (usersRes.error) console.warn("⚠️ Users failed:", usersRes.error.message);
+
     } catch (error) {
       console.error("❌ Error fetching admin data:", error);
-      alert("Failed to fetch data: " + (error.response?.data?.message || error.message));
+      showNotification("Failed to fetch data: " + (error.response?.data?.message || error.message), "danger");
+    } finally {
+      setDataLoading(false);
     }
-  }, [BASE_URL]); // Dependency ensures it updates if URL changes
+  }, [BASE_URL]);
 
   // ✅ FIX: Added fetchData to dependency array
   useEffect(() => {
@@ -134,8 +177,9 @@ const AdminDashboard = () => {
           headers: { Authorization: `Bearer ${token}` },
         });
         setBookings(bookings.filter((b) => b._id !== id));
+        localStorage.removeItem('admin_cache'); // Clear cache
       } catch (error) {
-        alert("Failed to delete booking");
+        showNotification("Failed to delete booking", "danger");
       }
     }
   };
@@ -214,6 +258,8 @@ const AdminDashboard = () => {
           headers: { Authorization: `Bearer ${token}` },
         });
         setDestinations(destinations.filter((d) => d._id !== id));
+        localStorage.removeItem('admin_cache'); // Clear cache
+        localStorage.removeItem('destinations_cache'); // Clear destinations cache
         showNotification(
           response.data.deletedDestination 
             ? `Destination '${response.data.deletedDestination}' deleted successfully` 
@@ -308,6 +354,8 @@ const AdminDashboard = () => {
       setFormErrors({});
       setImagePreview(null);
       setCurrentDest(null);
+      localStorage.removeItem('admin_cache'); // Clear cache
+      localStorage.removeItem('destinations_cache'); // Clear destinations cache
     } catch (error) {
       const errorMsg = error.response?.data?.message || "Failed to save destination";
       showNotification(errorMsg, "danger");
@@ -334,6 +382,14 @@ const AdminDashboard = () => {
     }
     setShowModal(true);
   };
+
+  // Pagination logic
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentBookings = bookings.slice(indexOfFirstItem, indexOfLastItem);
+  const totalPages = Math.ceil(bookings.length / itemsPerPage);
+
+  const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
   return (
     <Container className="py-5">
@@ -384,7 +440,29 @@ const AdminDashboard = () => {
                 </tr>
               </thead>
               <tbody>
-                {bookings.map((booking) => (
+                {dataLoading ? (
+                  // Loading skeleton
+                  [1, 2, 3, 4, 5].map((i) => (
+                    <tr key={i}>
+                      <td colSpan="8">
+                        <div style={{
+                          height: '20px',
+                          background: 'linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%)',
+                          backgroundSize: '200% 100%',
+                          animation: 'shimmer 1.5s infinite',
+                          borderRadius: '4px'
+                        }} />
+                      </td>
+                    </tr>
+                  ))
+                ) : currentBookings.length === 0 ? (
+                  <tr>
+                    <td colSpan="8" className="text-center text-muted py-4">
+                      No bookings found
+                    </td>
+                  </tr>
+                ) : (
+                  currentBookings.map((booking) => (
                   <tr key={booking._id}>
                     <td><small className="text-muted">{booking.bookingReference || 'N/A'}</small></td>
                     <td>{booking.username}</td>
@@ -437,10 +515,39 @@ const AdminDashboard = () => {
                       )}
                     </td>
                   </tr>
-                ))}
+                  ))
+                )}
               </tbody>
             </Table>
           </div>
+          
+          {/* Pagination Controls */}
+          {!dataLoading && bookings.length > itemsPerPage && (
+            <div className="d-flex justify-content-center align-items-center mt-3 gap-2">
+              <Button 
+                size="sm" 
+                variant="outline-primary"
+                onClick={() => paginate(currentPage - 1)}
+                disabled={currentPage === 1}
+              >
+                Previous
+              </Button>
+              
+              <span className="mx-3">
+                Page {currentPage} of {totalPages}
+                <small className="text-muted ms-2">({bookings.length} total)</small>
+              </span>
+              
+              <Button 
+                size="sm" 
+                variant="outline-primary"
+                onClick={() => paginate(currentPage + 1)}
+                disabled={currentPage === totalPages}
+              >
+                Next
+              </Button>
+            </div>
+          )}
         </Tab>
         <Tab eventKey="destinations" title="Destinations">
           <h3 className="section-title">Destinations</h3>
